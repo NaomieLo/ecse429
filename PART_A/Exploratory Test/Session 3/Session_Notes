@@ -5,8 +5,8 @@ TIME ------------------------------------------
 MM/DD/YY - HH:MM
 
 ENV -------------------------------------------
-Windows 10
-Screen resolution: 1920x1080
+macOS Ventura 13.5.2
+
 
 DESCRIPTION  ----------------------------------
 runTodoManagerRestAPI-1.5.5.jar
@@ -22,7 +22,6 @@ naomie.lo@mail.mcgill.ca
 
 
 TEST NOTES -------------------------------------
-
 
 END --------------------------------------------
 

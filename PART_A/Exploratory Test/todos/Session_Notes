@@ -1,0 +1,100 @@
+CHARTER -----------------------------------
+Identify capabilities and areas of potential instability of the “rest api todo list manager”.
+Identify documented and undocumented “rest api todo list manager” capabilities.
+For each capability create a script or small program to demonstrate the capability.
+Exercise each capability identified with data typical to the intended use of the application.
+
+TIME ------------------------------------------
+MM/DD/YY - HH:MM
+
+ENV -------------------------------------------
+Windows 10
+Screen resolution: 1920x1080
+
+DESCRIPTION  ----------------------------------
+runTodoManagerRestAPI-1.5.5.jar
+
+TESTER ----------------------------------------
+Deniz Emre
+deniz.emre@mail.mcgill.ca
+261029931
+
+Naomie Lo
+naomie.lo@mail.mcgill.ca
+261018690
+
+
+TEST NOTES -------------------------------------
+
+MM/DD/YY - 14:00
+1.01 GET /todos, output the 2 entries in the todo list
+
+MM/DD/YY - 14:01
+1.02 GET /todos/1, output entry 1 in todo list
+
+
+MM/DD/YY - 14:03
+1.03 GET /todos/3, output an error message as expected
+1.04 GET /todos/hello, output an error message as expected
+
+MM/DD/YY - 14:05
+1.05 GET /todos/, "404 not found" error but nothing is returned in body (see screen shot 1.05)
+
+MM/DD/YY - 14:07
+1.06 GET /todos/1/title, "404 not found" error but nothing is returned in body
+
+MM/DD/YY - 14:08
+1.07 GET /todos/1/projects, output the 1 entry in the projects list
+
+second going to try "POST" capabilities
+
+MM/DD/YY - 14:11
+1.08 POST /todos/1, output the elements of element with id 1
+1.09 POST /todos/3, output an error message as expected
+
+MM/DD/YY - 14:13
+1.10 POST /todos/1?id=2, output the contents of element with id 1
+1.11 /todos/1?id=helloworld, output the contents of element with id 1 expected an type input error 
+
+MM/DD/YY - 14:14
+1.12 DELETE /todos/1, deleted element with input 1 as expected 
+1.13 GET /todos/1, error Not Found as expected 
+
+MM/DD/YY - 14:15
+1.14 DELETE /todos/100, error Not Found as expected
+
+MM/DD/YY - 14:17
+1.15 HEAD /todos/2, nothing happened but no error
+1.16 HEAD /todos/1, error Not Found as expected since deleted 
+
+MM/DD/YY - 14:20
+1.17 OPTIONS /todos/2, no error and returned nothing
+1.18 OPTIONS /todos/1, no error and returned nothing not expected as entry with id 1 DNE
+
+MM/DD/YY - 14:21
+created python tests to try the capabilities seen with postman 
+refer to test_todos.py
+
+MM/DD/YY - 14:35
+performed a rebuild of runTodoManagerRestAPI-1.5.5.jar 
+
+MM/DD/YY - 14:35
+return to postman to continue testing capabilities
+1.19 POST todos/1?hello=bye, no error and no new attribute was added 
+
+MM/DD/YY - 14:37
+1.20 POST todos/1/tasksof/:id with path variable id = 3, updated the GUI as expected 
+1.21 DELETE todos/1/tasksof/:id with path variable id = 3, updated the GUI as expected 
+1.22 GET todos/1/tasksof/:id with path variable id = 3, error Not Found as expected 
+
+MM/DD/YY - 14:40
+??
+
+END --------------------------------------------
+
+SESSION FINDINGS -------------------------------
+
+
+CONCERNS ---------------------------------------
+
+TEST IDEAS -------------------------------------
