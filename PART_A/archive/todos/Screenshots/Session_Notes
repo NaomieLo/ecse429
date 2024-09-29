@@ -1,0 +1,39 @@
+CHARTER -----------------------------------
+Identify capabilities and areas of potential instability of the “rest api todo list manager”.
+Identify documented and undocumented “rest api todo list manager” capabilities.
+For each capability create a script or small program to demonstrate the capability.
+Exercise each capability identified with data typical to the intended use of the application.
+
+TIME ------------------------------------------
+MM/DD/YY - HH:MM
+
+ENV -------------------------------------------
+macOS 
+
+DESCRIPTION  ----------------------------------
+runTodoManagerRestAPI-1.5.5.jar
+
+TESTER ----------------------------------------
+Deniz Emre
+deniz.emre@mail.mcgill.ca
+261029931
+
+Naomie Lo
+naomie.lo@mail.mcgill.ca
+261018690
+
+
+TEST NOTES -------------------------------------
+
+MM/DD/YY - 14:00
+begin testing end points
+1.00 
+
+END --------------------------------------------
+
+SESSION FINDINGS -------------------------------
+
+
+CONCERNS ---------------------------------------
+
+TEST IDEAS -------------------------------------

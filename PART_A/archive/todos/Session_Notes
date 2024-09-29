@@ -88,7 +88,45 @@ MM/DD/YY - 14:37
 1.22 GET todos/1/tasksof/:id with path variable id = 3, error Not Found as expected 
 
 MM/DD/YY - 14:40
-??
+1.23 GET todos/:id/categories, returns the catagories for id 1
+1.24 HEAD todos/:id/categories, returns nothing not expected
+1.25 POST todos/:id/categories?title=hello, returns 400 error bad request with error message 
+
+MM/DD/YY - 14:42
+1.26 DELETE  todos/:id/categories/:id with id = 1, deleted this as expected 
+
+MM/DD/YY - 14:43
+1.27 HEAD todos/:id/tasksof with id = 1, no error but nothing returned not expected
+
+MM/DD/YY - 14:44
+1.28 POST /todos with JSON input below, created new task with id 6, expected because of failed attempts 
+
+{
+  "title": "commodo consequat.aa",
+  "doneStatus": true,
+  "description": "ullamco laboris nisi"
+}
+
+1.29 POST /todos with XML input below, created new task with id 8, expected because of failed attempts 
+
+{"title":"commodo consequat.aa","doneStatus":true,"description":"ullamco laboris nisi"}
+
+MM/DD/YY - 14:47
+1.30 POST /todos/:id/categories with XML input below, created a new catagories field in id 1 but the description was not added
+{
+  "id": "1",
+  "title": "t labore et dolore m",
+  "description": "iquip ex ea commodoa"
+}
+
+MM/DD/YY - 14:47
+1.30 POST /todos/:id/categories with JSON input below, created a new catagories field in id 1
+{
+  "title": "t labore et dolore m",
+  "description": "iquip ex ea commodoa"
+}
+
+MM/DD/YY - 14:47
 
 END --------------------------------------------
 
