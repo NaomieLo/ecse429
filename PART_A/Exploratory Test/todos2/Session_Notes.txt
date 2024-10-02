@@ -1,0 +1,158 @@
+CHARTER -----------------------------------
+Identify capabilities and areas of potential instability of the “rest api todo list manager”.
+Identify documented and undocumented “rest api todo list manager” capabilities.
+For each capability create a script or small program to demonstrate the capability.
+Exercise each capability identified with data typical to the intended use of the application.
+
+TIME ------------------------------------------
+MM/DD/YY - HH:MM
+
+ENV -------------------------------------------
+macOS
+
+DESCRIPTION  ----------------------------------
+runTodoManagerRestAPI-1.5.5.jar
+
+TESTER ----------------------------------------
+Naomie Lo
+naomie.lo@mail.mcgill.ca
+261018690
+
+LEGEND ----------------------------------------
+E - Expected == Observed
+N - Expected != Observed
+U - Undocumented 
+
+TEST NOTES ------------------------------------
+
+MM/DD/YY - 14:00
+start with testing endpoints in documentation 
+E | 1.00 GET /todos, returned the contents of todos
+N | 1.01 HEAD /todos, nothing returned but not errors
+E | 1.02 POST /todos with JSON input below, appended a new item with id 3 to todos
+{
+  "title": "cing elit, sed do ei",
+  "description": "nulla pariatur. Exce"
+}
+
+MM/DD/YY - 14:04
+E | 1.03 GET /todos/:id with param 1, returned the contents of todos
+N | 1.04 HEAD /todos/:id with param 1, nothing returned but not errors
+E | 1.05 POST /todos/:id with param 1 with JSON input below, updates instance to todo with id 1 with the new values below (Screenshot/1.05.png)
+{
+  "title": "cing elit, sed do ei",
+  "description": "nulla pariatur. Exce"
+}
+
+MM/DD/YY - 14:05
+E | 1.06 PUT /todos/:id with param 1 with JSON input below, updates instance to todo with id 1 with the new values below
+{
+  "title": "cing elit, sed do ei",
+  "description": "nulla pariatur. Exce"
+}
+E | 1.07 DELETE /todos/:id with param 1, deletes instance of todo with id 1
+
+MM/DD/YY - 14:12
+E | 1.08 GET /todos/:id/categories with param 1, returns the elements in categories in the todos instance with id 1 (Screenshots/1.08.png)
+N | 1.09 HEAD /todos/:id/categories with param 1, returns nothing with 200 OK
+E | 1.10 POST /todos/:id/categories with param 1 and JSON input below, adds id 3 to categories table, not sure why the deafult value is 3 if currently only instance with id 1 in categories (Screenshots/1.10)
+{
+  "title": "hello"
+}
+
+MM/DD/YY - 14:16
+E | 1.11 DELETE /todos/1/categories/3, deleted category id 3
+
+MM/DD/YY - 14:12
+E | 1.12 GET /todos/:id/tasksof with param 1, returns the elements in categories in the todos instance with id 1 
+N | 1.13 HEAD /todos/:id/tasksof with param 1, returns nothing with 200 OK
+E | 1.14 POST /todos/:id/tasksof with param 1 and JSON input below, adds id 2 to tasksof table 
+{
+  "title": "hello"
+}
+
+MM/DD/YY - 14:20
+E | 1.15 DELETE /todos/1/tasksof/2, deleted category id 2
+
+MM/DD/YY - 14:22
+begin testing undocumented capabilties 
+U | 1.16 DELETE /todos, error 405 method not allowed (Screenshots/1.16.png)
+U | 1.17 PUT /todos, error 405 method not allowed 
+U | 1.18 PATCH /todos, error 405 method not allowed 
+U | 1.19 OPTIONS /todos, 200 ok with no body returned (Screenshots/1.19.png)
+
+MM/DD/YY - 14:25
+U | 1.16 PATCH /todos/1, error 405 method not allowed 
+U | 1.17 OPTIONS /todos/1, 200 ok with no body returned 
+
+MM/DD/YY - 14:28
+U | 1.18 PUT /todos/1/categories, error 405 method not allowed 
+U | 1.19 PATCH /todos/1/categories, error 405 method not allowed 
+U | 1.20 OPTIONS /todos/1/categories, 200 ok with no body returned 
+U | 1.21 PATCH /todos/1/categories, error 405 method not allowed 
+
+
+MM/DD/YY - 14:30
+begin testing with data that would be used, restarted api
+E | 1.22 POST /todos/1/catagories with JSON input below, want to test how deafult numbering of id work this assigned id 3 to new instance (Screenshot/1.22)
+{
+  "title": "hello"
+}
+
+E | 1.23 POST /todos/1/tasksof, want to test how deafult numbering of id work this assigned id 2 to new instance
+{
+  "title": "hello"
+}
+
+E | 1.24 POST /todos/1/tasksof, want to test how deafult numbering of id work this assigned id 3 to new instance
+{
+  "title": "hello"
+}
+
+E | 1.25 POST /todos/1/catagories with JSON input below, want to test how deafult numbering of id work this assigned id 4 to new instance (Screenshot/1.25)
+{
+  "title": "hello"
+}
+
+MM/DD/YY - 14:36
+E | 1.26 GET /todos/10000, error 404 not found as expected "Could not find any instances with todos/10000" (Screenshot/1.26.png)
+E | 1.27 HEAD /todos/10000, error 404 not found as expected "Could not find any instances with todos/10000"
+E | 1.28 DELETE /todos/10000, error 404 not found as expected "Could not find any instances with todos/10000"
+
+
+MM/DD/YY - 14:37
+N | 1.29 POST /todos/1/categories with XML input below, 400 bad request error indicating id is invalid (Screenshot/1.29)
+<todos>
+  <id>10</id>
+</todos>
+
+N | 1.25 GET /todos/1/categories with XML input below, 400 bad request error indicating id is invalid 
+<todos>
+  <id>"10"</id>
+</todos>
+
+N | 1.26 GET /todos/1 with JSOM input below,  400 bad request error indicating id is invalid 
+{
+    "id": "1"
+}
+
+MM/DD/YY - 14:40
+creating a small script to test capabilities
+
+END --------------------------------------------
+
+SESSION FINDINGS -------------------------------
+- When an ID id not specified, categories start at last id + 2 as deafult and increase by 1 but tasksof begin at last id + 1
+- Could not enter an ID value using XML or JSON with POST, would get a error indicating the syntax is invalid
+- Not sure what HEAD is supposed to return since nothing was ever returned while using this and no errors were ever thrown 
+
+CONCERNS ---------------------------------------
+- There are many undocumented capabilities, and most undocumented returned errors 
+- The default numbering for IDs is a bit confusing to follow 
+- In the doucmentation, the type for id is "ID" which is not a valid type to input in a JSON or XML
+- In screenshot 1.25 the ordering of the categories id are in no logical order, not even the order they've been appended 
+
+TEST IDEAS -------------------------------------
+- Learn more about how todos affects its relationships like project and catagories
+- Continue testing the different kinds of inputs in the JSON and XML format that is valid
+- Test the upper bound length for inputs into when using POST
