@@ -50,7 +50,7 @@ E | 1.06 PUT /todos/:id with param 1 with JSON input below, updates instance to 
   "title": "cing elit, sed do ei",
   "description": "nulla pariatur. Exce"
 }
-E | 1.07 DELETE /todos/:id with param 1, deletes instance of todo with id 1
+E | 1.07 DELETE /todos/:id with param 2, deletes instance of todo with id 1
 
 MM/DD/YY - 14:12
 E | 1.08 GET /todos/:id/categories with param 1, returns the elements in categories in the todos instance with id 1 (Screenshots/1.08.png)
