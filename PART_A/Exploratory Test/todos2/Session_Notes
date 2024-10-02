@@ -1,0 +1,150 @@
+CHARTER -----------------------------------
+Identify capabilities and areas of potential instability of the “rest api todo list manager”.
+Identify documented and undocumented “rest api todo list manager” capabilities.
+For each capability create a script or small program to demonstrate the capability.
+Exercise each capability identified with data typical to the intended use of the application.
+
+TIME ------------------------------------------
+MM/DD/YY - HH:MM
+
+ENV -------------------------------------------
+macOS
+
+DESCRIPTION  ----------------------------------
+runTodoManagerRestAPI-1.5.5.jar
+
+TESTER ----------------------------------------
+Deniz Emre
+deniz.emre@mail.mcgill.ca
+261029931
+
+Naomie Lo
+naomie.lo@mail.mcgill.ca
+261018690
+
+
+TEST NOTES -------------------------------------
+MM/DD/YY - 14:00
+start with testing endpoints in documentation 
+1.00 GET /todos, returned the contents of todos as expected
+1.01 HEAD /todos, nothing returned but not errors, not expected 
+1.02 POST /todos, 400 Bad Request "title : field is mandatory", but documentation says it should create without id value
+
+MM/DD/YY - 14:04
+1.03 GET /todos/:id with param 1, returned the contents of todos as expected
+1.04 HEAD /todos/:id with param 1, nothing returned but not errors, not expected 
+1.05 POST /todos/:id with param 1, passes and nothing was added to the
+1.06 PUT /todos/:id with param 1 with input title = "new value", Bad Request "title : field is mandatory", but documentation says it should create without id value
+
+MM/DD/YY - 14:09
+1.07 GET /todos/:id with param 1 with JSON input below, updated the title of id 1
+{
+  "title": "re et dolore magna a"
+}
+
+
+MM/DD/YY - 14:12
+1.08 GET /todos/:id/categories with param 1, returns empty set as expected  
+1.09 HEAD /todos/:id/categories with param 1, returns nothing and no error
+1.10 POST /todos/:id/categories with param 1, adds id 3 to categories table as expected
+1.11 POST /todos/:id/categories with param 1, adds id 5 to categories table as expected 
+
+MM/DD/YY - 14:15
+1.12 DELETE /todos/1/categories/5, deleted category id 5 as expected 
+
+MM/DD/YY - 14:16
+begin testing undocumented capabilties 
+1.13 POST /todos/1 with JSON input below, got error "Failed Validation: doneStatus should be BOOLEAN" as expected 
+{
+  "title": "e eu fugiat nulla pa",
+  "doneStatus": "true",
+  "description": "it anim id est labor",
+  "new field" : "123"
+}
+
+1.14 POST /todos/1 with JSON input below, got error "Could not find field: new field" as expected 
+{
+  "title": "e eu fugiat nulla pa",
+  "doneStatus": true,
+  "description": "it anim id est labor",
+  "new field" : "123"
+}
+
+MM/DD/YY - 14:18
+1.15 POST /todos/1 with JSON input below, updated as expected
+{
+  "doneStatus": false,
+  "description": "it anim id est labor"
+}
+
+MM/DD/YY - 14:19
+1.16 POST /todos with JSON input below, new ID made as expected 
+{
+  "title" : "new id",
+  "doneStatus": false,
+  "description": "it anim id est labor"
+}
+
+MM/DD/YY - 14:22
+1.17 POST /todos/1/tasksof, assigned id 2 to this not sure how they got this with no further inputs
+1.18 POST /todos/1/tasksof, assigned id 3 to this not sure how they got this with no further inputs
+
+MM/DD/YY - 14:25
+1.19 DELETE /todos/1/tasksof, error (405) task is not allowed 
+
+MM/DD/YY - 14:26
+1.20 GET /todos/6, error (404) not found as expected "Could not find any instances with todos/6"
+1.21 HEAD /todos/6, error (404) not found as expected "Could not find any instances with todos/6"
+1.22 DELETE /todos/6, error (404) not found as expected "Could not find any instances with todos/6"
+1.23 POST /todos/:id, error (404) not found as expected  "No such todo entity instance with GUID or ID abc found"
+
+MM/DD/YY - 14:30
+try using XML as inputs and observe the different outcomes since used JSON and params up to this point
+
+1.24 GET /todos/1/categories with XML input below, returned contents as expected
+<project>
+  <id>1</id>
+</project>
+
+
+1.25 GET /todos/1/categories with XML input below, returned contents as expected
+ <catagories> 
+  <id>"1"</id>
+</catagories>
+
+1.26 GET /todos/1 with JSOM input below, returned contents as expected
+{
+    "id": "1"
+}
+
+MM/DD/YY - 14:35
+1.27 POST /todos/1/categories with XML input below, error (400) {"errorMessages":["java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $"]}
+<catagories>
+  <id>5</id>
+</catagories>
+
+
+1.28 POST /todos/1/categories with XML input below,  error (400) {"errorMessages":["java.lang.IllegalStateException: Expected BEGIN_OBJECT but was STRING at line 1 column 1 path $"]}
+<catagories>
+  <id>"5"</id>
+</catagories>
+
+1.29 POST /todos/1/categories with JSOM input below, added a new category instance with id 5 as expected 
+{
+    "id": "5"
+}
+
+MM/DD/YY - 14:40
+1.30 POST /todos with JSOM input below, added a new category instance with id 6 as expected 
+{
+  "title": "cing elit, sed do ei",
+  "description": "nulla pariatur. Exce"
+}
+
+END --------------------------------------------
+
+SESSION FINDINGS -------------------------------
+
+CONCERNS ---------------------------------------
+
+TEST IDEAS -------------------------------------
