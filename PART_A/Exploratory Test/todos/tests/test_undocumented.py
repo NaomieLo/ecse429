@@ -6,21 +6,6 @@ import json
 API_URL = "http://localhost:4567"
 
 
-@pytest.fixture(scope="module")
-def save_system_state():
-    response = requests.get(API_URL + "/todos")
-    assert response.status_code == 200, "Failed to get initial state"
-    return response.json()
-
-
-@pytest.fixture(scope="module")
-def setup_system():
-    data = {"title": "title", "description": "description"}
-    response = requests.post(API_URL + "/todos", json=data)
-    assert response.status_code == 201, "Failed to create initial todo for tests"
-    return response.json()
-
-
 def ensure_system_ready():
     response = requests.get(API_URL)
     assert response.status_code == 200, "API is not active"
@@ -32,199 +17,135 @@ def restore_system_state(initial_state):
     initial_ids = {todo["id"] for todo in initial_state["todos"]}
 
 
-#### TODOS ####
+#### Additional Tests for Method Not Allowed and OPTIONS ####
 
 
-def test_get_todos():
-    response = requests.get(API_URL + "/todos")
-    assert response.status_code == 200, "GET /todos failed"
+def test_delete_todos():
+    response = requests.delete(API_URL + "/todos")
+    assert (
+        response.status_code == 405
+    ), "DELETE /todos failed with unexpected status code"
 
 
-def test_post_todos():
-    data = {"title": " title", "description": " description"}
+def test_put_todos():
+    data = {"title": "updated_title", "description": "updated_description"}
+    response = requests.put(API_URL + "/todos", json=data)
+    assert response.status_code == 405, "PUT /todos failed with unexpected status code"
+
+
+def test_patch_todos():
+    data = {"title": "updated_title"}
+    response = requests.patch(API_URL + "/todos", json=data)
+    assert (
+        response.status_code == 405
+    ), "PATCH /todos failed with unexpected status code"
+
+
+def test_options_todos():
+    response = requests.options(API_URL + "/todos")
+    assert (
+        response.status_code == 200
+    ), "OPTIONS /todos failed with unexpected status code"
+    assert response.content == b"", "OPTIONS /todos returned unexpected content"
+
+
+def test_patch_todos_id():
+    data = {"title": " title", "description": "description"}
     response = requests.post(API_URL + "/todos", json=data)
-    assert response.status_code == 201, "POST /todos failed"
+    assert response.status_code == 201, "Failed to create todo"
     todo_id = response.json()["id"]
 
-
-def test_head_todos():
-    response = requests.head(API_URL + "/todos")
-    assert response.status_code == 200, "HEAD /todos failed"
-
-
-#### TODOS/:ID ####
-
-
-def test_get_todos_id():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
-    response = requests.post(API_URL + "/todos", json=data)
-    todo_id = response.json()["id"]
-
-    response = requests.get(API_URL + f"/todos/{todo_id}")
-    assert response.status_code == 200, f"GET /todos/{todo_id} failed"
-
-
-def test_head_todos_id():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
-    response = requests.post(API_URL + "/todos", json=data)
-    todo_id = response.json()["id"]
-
-    response = requests.head(API_URL + f"/todos/{todo_id}")
-    assert response.status_code == 200, f"HEAD /todos/{todo_id} failed"
-
-
-def test_post_todos_id():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
-    response = requests.post(API_URL + "/todos", json=data)
-    todo_id = response.json()["id"]
-
-    update_data = {"title": "updated_title", "description": "updated_description"}
-    response = requests.post(API_URL + f"/todos/{todo_id}", json=update_data)
-    assert response.status_code in [200, 204], f"POST /todos/{todo_id} failed"
-
-
-def test_delete_todos_id():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
-    response = requests.post(API_URL + "/todos", json=data)
-    todo_id = response.json()["id"]
+    patch_data = {"title": "patched_title"}
+    response = requests.patch(API_URL + f"/todos/{todo_id}", json=patch_data)
+    assert (
+        response.status_code == 405
+    ), f"PATCH /todos/{todo_id} failed with unexpected status code"
 
     response = requests.delete(API_URL + f"/todos/{todo_id}")
     assert response.status_code in [200, 204], f"DELETE /todos/{todo_id} failed"
 
 
-#### TODOS/:ID/CATEGORIES ####
-
-
-def test_get_todos_id_categories():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
+def test_options_todos_id():
+    data = {"title": " title", "description": "description"}
     response = requests.post(API_URL + "/todos", json=data)
+    assert response.status_code == 201, "Failed to create todo"
     todo_id = response.json()["id"]
 
-    response = requests.get(API_URL + f"/todos/{todo_id}/categories")
-    assert response.status_code == 200, f"GET /todos/{todo_id}/categories failed"
-
-
-def test_head_todos_id_categories():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
-    response = requests.post(API_URL + "/todos", json=data)
-    todo_id = response.json()["id"]
-
-    response = requests.head(API_URL + f"/todos/{todo_id}/categories")
-    assert response.status_code == 200, f"HEAD /todos/{todo_id}/categories failed"
-
-
-def test_post_todos_id_categories():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
-    response = requests.post(API_URL + "/todos", json=data)
-    todo_id = response.json()["id"]
-
-    category_data = {"title": "title", "description": "description"}
-    response = requests.post(
-        API_URL + f"/todos/{todo_id}/categories", json=category_data
-    )
-    assert response.status_code == 201, f"POST /todos/{todo_id}/categories failed"
-
-
-#### TODOS/:ID/CATEGORIES/:ID ####
-
-
-def test_delete_todos_id_categories_id():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
-    response = requests.post(API_URL + "/todos", json=data)
-    todo_id = response.json()["id"]
-
-    # create a new category in todo
-    category_data = {"title": "title", "description": "description"}
-    response = requests.post(API_URL + "/categories", json=category_data)
-    assert response.status_code == 201, "Failed to create category"
-    category_id = response.json()["id"]
-
-    response = requests.post(
-        API_URL + f"/todos/{todo_id}/categories", json={"id": category_id}
-    )
+    response = requests.options(API_URL + f"/todos/{todo_id}")
     assert (
-        response.status_code == 201
-    ), f"Failed to link category {category_id} to todo {todo_id}"
+        response.status_code == 200
+    ), f"OPTIONS /todos/{todo_id} failed with unexpected status code"
+    assert (
+        response.content == b""
+    ), f"OPTIONS /todos/{todo_id} returned unexpected content"
+
+    response = requests.delete(API_URL + f"/todos/{todo_id}")
+    assert response.status_code in [200, 204], f"DELETE /todos/{todo_id} failed"
 
 
-#### TODOS/:ID/TASKSOF ####
-
-
-def test_get_todos_id_taskof():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
+def test_put_todos_id_categories():
+    data = {"title": " title", "description": "description"}
     response = requests.post(API_URL + "/todos", json=data)
+    assert response.status_code == 201, "Failed to create todo"
     todo_id = response.json()["id"]
 
-    response = requests.get(API_URL + f"/todos/{todo_id}/tasksof")
-    assert response.status_code == 200, f"GET /todos/{todo_id}/tasksof failed"
+    update_data = {"title": "updated_category"}
+    response = requests.put(API_URL + f"/todos/{todo_id}/categories", json=update_data)
+    assert (
+        response.status_code == 405
+    ), f"PUT /todos/{todo_id}/categories failed with unexpected status code"
+
+    response = requests.delete(API_URL + f"/todos/{todo_id}")
+    assert response.status_code in [200, 204], f"DELETE /todos/{todo_id} failed"
 
 
-def test_head_todos_id_taskof():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
+def test_patch_todos_id_categories():
+    data = {"title": " title", "description": "description"}
     response = requests.post(API_URL + "/todos", json=data)
+    assert response.status_code == 201, "Failed to create todo"
     todo_id = response.json()["id"]
 
-    response = requests.head(API_URL + f"/todos/{todo_id}/tasksof")
-    assert response.status_code == 200, f"HEAD /todos/{todo_id}/tasksof failed"
+    patch_data = {"title": "patched_category"}
+    response = requests.patch(API_URL + f"/todos/{todo_id}/categories", json=patch_data)
+    assert (
+        response.status_code == 405
+    ), f"PATCH /todos/{todo_id}/categories failed with unexpected status code"
+
+    response = requests.delete(API_URL + f"/todos/{todo_id}")
+    assert response.status_code in [200, 204], f"DELETE /todos/{todo_id} failed"
 
 
-def test_post_todos_id_taskof():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
+def test_options_todos_id_categories():
+    data = {"title": " title", "description": "description"}
     response = requests.post(API_URL + "/todos", json=data)
+    assert response.status_code == 201, "Failed to create todo"
     todo_id = response.json()["id"]
 
-    task_data = {"title": "test_task", "description": "task_description"}
-    response = requests.post(API_URL + f"/todos/{todo_id}/tasksof", json=task_data)
-    assert response.status_code == 201, f"POST /todos/{todo_id}/tasksof failed"
+    response = requests.options(API_URL + f"/todos/{todo_id}/categories")
+    assert (
+        response.status_code == 200
+    ), f"OPTIONS /todos/{todo_id}/categories failed with unexpected status code"
+    assert (
+        response.content == b""
+    ), f"OPTIONS /todos/{todo_id}/categories returned unexpected content"
+
+    response = requests.delete(API_URL + f"/todos/{todo_id}")
+    assert response.status_code in [200, 204], f"DELETE /todos/{todo_id} failed"
 
 
-#### TODOS/:ID/TASKSOF/:ID ####
-def test_delete_todos_id_taskof_id():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
-    response = requests.post(API_URL + "/todos", json=data)
-    todo_id = response.json()["id"]
-
-    response = requests.delete(API_URL + f"/todos/{todo_id}/tasksof/1")
-    assert response.status_code in [
-        200,
-        204,
-        404,
-    ], f"DELETE /todos/{todo_id}/tasksof/1 failed"
-
-
-# Summary function to keep track of tests
-@pytest.mark.usefixtures("save_system_state", "setup_system")
 def test_summary():
     passed_tests = 0
     failed_tests = 0
     test_functions = [
-        test_get_todos,
-        test_head_todos,
-        test_post_todos,
-        test_get_todos_id,
-        test_head_todos_id,
-        test_post_todos_id,
-        test_delete_todos_id,
-        test_get_todos_id_categories,
-        test_head_todos_id_categories,
-        test_post_todos_id_categories,
-        test_delete_todos_id_categories_id,
-        test_get_todos_id_taskof,
-        test_head_todos_id_taskof,
-        test_post_todos_id_taskof,
-        test_delete_todos_id_taskof_id,
+        test_delete_todos,
+        test_put_todos,
+        test_patch_todos,
+        test_options_todos,
+        test_patch_todos_id,
+        test_options_todos_id,
+        test_put_todos_id_categories,
+        test_patch_todos_id_categories,
+        test_options_todos_id_categories,
     ]
 
     print("")

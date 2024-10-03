@@ -6,30 +6,9 @@ import json
 API_URL = "http://localhost:4567"
 
 
-@pytest.fixture(scope="module")
-def save_system_state():
-    response = requests.get(API_URL + "/todos")
-    assert response.status_code == 200, "Failed to get initial state"
-    return response.json()
-
-
-@pytest.fixture(scope="module")
-def setup_system():
-    data = {"title": "title", "description": "description"}
-    response = requests.post(API_URL + "/todos", json=data)
-    assert response.status_code == 201, "Failed to create initial todo for tests"
-    return response.json()
-
-
 def ensure_system_ready():
     response = requests.get(API_URL)
     assert response.status_code == 200, "API is not active"
-
-
-def restore_system_state(initial_state):
-    current_state = requests.get(API_URL + "/todos").json()
-    current_ids = {todo["id"] for todo in current_state["todos"]}
-    initial_ids = {todo["id"] for todo in initial_state["todos"]}
 
 
 #### TODOS ####
@@ -41,10 +20,12 @@ def test_get_todos():
 
 
 def test_post_todos():
-    data = {"title": " title", "description": " description"}
+    data = {"title": "title", "description": "description"}
     response = requests.post(API_URL + "/todos", json=data)
     assert response.status_code == 201, "POST /todos failed"
     todo_id = response.json()["id"]
+
+    requests.delete(f"{API_URL}/todos/{todo_id}")
 
 
 def test_head_todos():
@@ -56,39 +37,53 @@ def test_head_todos():
 
 
 def test_get_todos_id():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
+    data = {"title": "title", "description": "description"}
     response = requests.post(API_URL + "/todos", json=data)
     todo_id = response.json()["id"]
 
     response = requests.get(API_URL + f"/todos/{todo_id}")
     assert response.status_code == 200, f"GET /todos/{todo_id} failed"
 
+    requests.delete(f"{API_URL}/todos/{todo_id}")
+
 
 def test_head_todos_id():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
+    data = {"title": "title", "description": "description"}
     response = requests.post(API_URL + "/todos", json=data)
     todo_id = response.json()["id"]
 
     response = requests.head(API_URL + f"/todos/{todo_id}")
     assert response.status_code == 200, f"HEAD /todos/{todo_id} failed"
 
+    requests.delete(f"{API_URL}/todos/{todo_id}")
+
 
 def test_post_todos_id():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
+    data = {"title": "title", "description": "description"}
     response = requests.post(API_URL + "/todos", json=data)
     todo_id = response.json()["id"]
 
-    update_data = {"title": "updated_title", "description": "updated_description"}
+    update_data = {"title": "title", "description": "description"}
     response = requests.post(API_URL + f"/todos/{todo_id}", json=update_data)
     assert response.status_code in [200, 204], f"POST /todos/{todo_id} failed"
 
+    requests.delete(f"{API_URL}/todos/{todo_id}")
+
+
+def test_put_todos_id():
+    data = {"title": "title", "description": "description"}
+    response = requests.post(API_URL + "/todos", json=data)
+    todo_id = response.json()["id"]
+
+    update_data = {"title": "title", "description": "description"}
+    response = requests.put(API_URL + f"/todos/{todo_id}", json=update_data)
+    assert response.status_code in [200, 204], f"PUT /todos/{todo_id} failed"
+
+    requests.delete(f"{API_URL}/todos/{todo_id}")
+
 
 def test_delete_todos_id():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
+    data = {"title": "title", "description": "description"}
     response = requests.post(API_URL + "/todos", json=data)
     todo_id = response.json()["id"]
 
@@ -100,134 +95,203 @@ def test_delete_todos_id():
 
 
 def test_get_todos_id_categories():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
+    data = {"title": "title", "description": "description"}
     response = requests.post(API_URL + "/todos", json=data)
     todo_id = response.json()["id"]
 
     response = requests.get(API_URL + f"/todos/{todo_id}/categories")
     assert response.status_code == 200, f"GET /todos/{todo_id}/categories failed"
 
+    requests.delete(f"{API_URL}/todos/{todo_id}")
+
+
+def test_post_todos_id_categories():
+    todo_data = {"title": "title", "description": "description"}
+    category_data = {"title": "title", "description": "description"}
+
+    response_todo = requests.post(API_URL + "/todos", json=todo_data)
+    todo_id = response_todo.json()["id"]
+
+    response_category = requests.post(API_URL + "/categories", json=category_data)
+    category_id = response_category.json()["id"]
+
+    link_data = {"id": category_id}
+    response_link = requests.post(
+        API_URL + f"/todos/{todo_id}/categories", json=link_data
+    )
+    assert response_link.status_code == 201, f"POST /todos/{todo_id}/categories failed"
+
+    requests.delete(f"{API_URL}/todos/{todo_id}")
+    requests.delete(f"{API_URL}/categories/{category_id}")
+
 
 def test_head_todos_id_categories():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
+    data = {"title": "title", "description": "description"}
     response = requests.post(API_URL + "/todos", json=data)
     todo_id = response.json()["id"]
 
     response = requests.head(API_URL + f"/todos/{todo_id}/categories")
     assert response.status_code == 200, f"HEAD /todos/{todo_id}/categories failed"
 
-
-def test_post_todos_id_categories():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
-    response = requests.post(API_URL + "/todos", json=data)
-    todo_id = response.json()["id"]
-
-    category_data = {"title": "title", "description": "description"}
-    response = requests.post(
-        API_URL + f"/todos/{todo_id}/categories", json=category_data
-    )
-    assert response.status_code == 201, f"POST /todos/{todo_id}/categories failed"
+    requests.delete(f"{API_URL}/todos/{todo_id}")
 
 
 #### TODOS/:ID/CATEGORIES/:ID ####
 
 
 def test_delete_todos_id_categories_id():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
-    response = requests.post(API_URL + "/todos", json=data)
-    todo_id = response.json()["id"]
-
-    # create a new category in todo
+    todo_data = {"title": "title", "description": "description"}
     category_data = {"title": "title", "description": "description"}
-    response = requests.post(API_URL + "/categories", json=category_data)
-    assert response.status_code == 201, "Failed to create category"
-    category_id = response.json()["id"]
 
-    response = requests.post(
-        API_URL + f"/todos/{todo_id}/categories", json={"id": category_id}
-    )
-    assert (
-        response.status_code == 201
-    ), f"Failed to link category {category_id} to todo {todo_id}"
+    response_todo = requests.post(API_URL + "/todos", json=todo_data)
+    todo_id = response_todo.json()["id"]
+
+    response_category = requests.post(API_URL + "/categories", json=category_data)
+    category_id = response_category.json()["id"]
+
+    requests.post(API_URL + f"/todos/{todo_id}/categories", json={"id": category_id})
+
+    response = requests.delete(API_URL + f"/todos/{todo_id}/categories/{category_id}")
+    assert response.status_code in [
+        200,
+        204,
+    ], f"DELETE /todos/{todo_id}/categories/{category_id} failed"
+
+    requests.delete(f"{API_URL}/todos/{todo_id}")
+    requests.delete(f"{API_URL}/categories/{category_id}")
 
 
 #### TODOS/:ID/TASKSOF ####
 
 
 def test_get_todos_id_taskof():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
+    data = {"title": "title", "description": "description"}
     response = requests.post(API_URL + "/todos", json=data)
     todo_id = response.json()["id"]
 
     response = requests.get(API_URL + f"/todos/{todo_id}/tasksof")
     assert response.status_code == 200, f"GET /todos/{todo_id}/tasksof failed"
 
+    requests.delete(f"{API_URL}/todos/{todo_id}")
+
+
+def test_post_todos_id_taskof():
+    # create a ne todo
+    data = {"title": " title", "description": " description"}
+    response = requests.post(API_URL + "/todos", json=data)
+    todo_id = response.json()["id"]
+
+    task_data = {"title": "title", "description": "description"}
+    response = requests.post(API_URL + f"/todos/{todo_id}/tasksof", json=task_data)
+    assert response.status_code == 201, f"POST /todos/{todo_id}/tasksof failed"
+
+    requests.delete(f"{API_URL}/todos/{todo_id}")
+
 
 def test_head_todos_id_taskof():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
+    data = {"title": "title", "description": "description"}
     response = requests.post(API_URL + "/todos", json=data)
     todo_id = response.json()["id"]
 
     response = requests.head(API_URL + f"/todos/{todo_id}/tasksof")
     assert response.status_code == 200, f"HEAD /todos/{todo_id}/tasksof failed"
 
-
-def test_post_todos_id_taskof():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
-    response = requests.post(API_URL + "/todos", json=data)
-    todo_id = response.json()["id"]
-
-    task_data = {"title": "test_task", "description": "task_description"}
-    response = requests.post(API_URL + f"/todos/{todo_id}/tasksof", json=task_data)
-    assert response.status_code == 201, f"POST /todos/{todo_id}/tasksof failed"
+    requests.delete(f"{API_URL}/todos/{todo_id}/tasksof")
+    requests.delete(f"{API_URL}/todos/{todo_id}")
 
 
 #### TODOS/:ID/TASKSOF/:ID ####
-def test_delete_todos_id_taskof_id():
-    # create a new todo
-    data = {"title": " title", "description": " description"}
-    response = requests.post(API_URL + "/todos", json=data)
-    todo_id = response.json()["id"]
 
-    response = requests.delete(API_URL + f"/todos/{todo_id}/tasksof/1")
-    assert response.status_code in [
+
+def test_delete_todos_id_tasksof_id():
+
+    data = {"title": "title", "description": "description"}
+    response_todo = requests.post(API_URL + "/todos", json=data)
+    assert response_todo.status_code == 201, "Failed to create Todo"
+    todo_id = response_todo.json()["id"]
+
+    task_data = {
+        "title": "title",
+        "description": "dscription",
+        "completed": False,
+        "active": False,
+    }
+    response_task = requests.post(API_URL + f"/todos/{todo_id}/tasksof", json=task_data)
+    assert response_task.status_code == 201, "Failed to create Task"
+    task_id = response_task.json()["id"]
+
+    response_link = requests.post(
+        API_URL + f"/todos/{todo_id}/tasksof", json={"id": task_id}
+    )
+    assert (
+        response_link.status_code == 201
+    ), f"Failed to link Task {task_id} to Todo {todo_id}"
+
+    response_delete = requests.delete(API_URL + f"/todos/{todo_id}/tasksof/{task_id}")
+    assert response_delete.status_code in [
         200,
         204,
-        404,
-    ], f"DELETE /todos/{todo_id}/tasksof/1 failed"
+    ], f"DELETE /todos/{todo_id}/tasksof/{task_id} failed"
+
+    requests.delete(f"{API_URL}/taskof/{task_id}")
+    requests.delete(f"{API_URL}/todos/{todo_id}")
 
 
-# Summary function to keep track of tests
-@pytest.mark.usefixtures("save_system_state", "setup_system")
+#### TEST INSTABILITIES ####
+
+
+def test_get_todos_not_found():
+    response = requests.get(API_URL + "/todos/10000")
+    assert (
+        response.status_code == 404
+    ), "GET /todos/10000 did not return 404 as expected"
+
+
+def test_head_todos_not_found():
+    response = requests.head(API_URL + "/todos/10000")
+    assert (
+        response.status_code == 404
+    ), "HEAD /todos/10000 did not return 404 as expected"
+
+
+def test_delete_todos_not_found():
+    response = requests.delete(API_URL + "/todos/10000")
+    assert (
+        response.status_code == 404
+    ), "DELETE /todos/10000 did not return 404 as expected"
+
+
 def test_summary():
-    passed_tests = 0
-    failed_tests = 0
+
+    ensure_system_ready()
+
     test_functions = [
         test_get_todos,
-        test_head_todos,
         test_post_todos,
+        test_head_todos,
         test_get_todos_id,
         test_head_todos_id,
         test_post_todos_id,
+        test_put_todos_id,
         test_delete_todos_id,
         test_get_todos_id_categories,
-        test_head_todos_id_categories,
         test_post_todos_id_categories,
+        test_head_todos_id_categories,
         test_delete_todos_id_categories_id,
         test_get_todos_id_taskof,
-        test_head_todos_id_taskof,
         test_post_todos_id_taskof,
-        test_delete_todos_id_taskof_id,
+        test_head_todos_id_taskof,
+        test_delete_todos_id_tasksof_id,
+        test_get_todos_not_found,
+        test_head_todos_not_found,
+        test_delete_todos_not_found,
     ]
 
+    passed_tests = 0
+    failed_tests = 0
+
     print("")
+
     for test in test_functions:
         try:
             test()
