@@ -78,19 +78,18 @@ Potential vulnerability: No response message => the user can't know if it was su
 
 MM/DD/YY - 16:05
 
-N |1.17 POST/projects/2/categories with body: {
-    "categories": [
+N |1.17 POST/projects/2/categories with body:
         {
             "title": ", quis nostrud exerc",
             "description": "si ut aliquip ex eaa"
         }
-    ]
-} ID nb 4 generated, why not 1?
+    
+ID nb 3 generated, why not 1? (Screenshots/1.17.png)
 
 Potential vulnerability: ID numbers are difficult to keep track of. Test how the ID numbers are incremented throughout projects 
 
-E |1.18 GET /projects/1/categories, gets the categories of project 2
-N |1.19 GET /projects/2/categories, gets the categories of project 1. However, project 2 does not exist => BUG
+E |1.18 GET /projects/2/categories, gets the categories of project 2 
+N |1.19 GET /projects/3/categories, gets the categories of project 1. However, project 3 does not exist => BUG (Screenshots/1.19.png)
 N |1.20 GET /projects/anything/categories, gets the categories of project 1. However none of these projects exist => BUG
 
 E |1.21 HEAD /projects/1/categories, gets the categories of project 1, returns empty 
@@ -103,9 +102,9 @@ Category succesfully created with next available ID count in project with ID 1, 
 
 E |1.23 POST /projects/2/categories with same body, Error message shown, no parent thing found, as expected
 
-N |1.24 POST /projects/1/categories {id:15} as json -> "Could not find thing matching value for id"
+N |1.24 POST /projects/2/categories {id:3} as json -> "Could not find thing matching value for id" (Screenshots/1.24.png)
 
-N |1.25 POST /projects/1/categories {id:"15"} as json -> created successfully
+N |1.25 POST /projects/2/categories {id:"3"} as json -> created successfully (Screenshots/1.25.png)
 
 Bug: A string value is expected, but that cannot be created using XML.
 
@@ -139,13 +138,13 @@ E |1.28 HEAD /projects/1/tasks, 200 OK returns empty body
 MM/DD/YY - 16:28
 
 E |1.29 DELETE /projects/1/tasks/8, deletes the task 8 from projects, but doesn't return succesful deletion message
-N |1.30 DELETE /projects/5/tasks/8, returns no instance error message
+E |1.30 DELETE /projects/5/tasks/8, returns no instance error message
 
 6- Testing undocumented capabilities
 
 MM/DD/YY - 16:32
 begin testing undocumented capabilties 
-U | 1.31 DELETE /projects, error 405 method not allowed (Screenshots/1.16.png)
+U | 1.31 DELETE /projects, error 405 method not allowed (Screenshots/1.31.png)
 U | 1.32 PUT /projects, error 405 method not allowed 
 U | 1.33 OPTIONS /projects, 200 ok with no body returned
 
