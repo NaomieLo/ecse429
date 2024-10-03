@@ -1,0 +1,170 @@
+CHARTER -----------------------------------
+Identify capabilities and areas of potential instability of the “rest api todo list manager”.
+Identify documented and undocumented “rest api todo list manager” capabilities.
+For each capability create a script or small program to demonstrate the capability.
+Exercise each capability identified with data typical to the intended use of the application.
+
+TIME ------------------------------------------
+MM/DD/YY - HH:MM
+
+ENV -------------------------------------------
+Windows 10
+Screen resolution: 1920x1080
+
+DESCRIPTION  ----------------------------------
+runTodoManagerRestAPI-1.5.5.jar
+
+TESTER ----------------------------------------
+Deniz Emre
+deniz.emre@mail.mcgill.ca
+261029931
+
+LEGEND ----------------------------------------
+E - Expected == Observed
+N - Expected != Observed
+U - Undocumented 
+
+TEST NOTES -------------------------------------
+
+
+1- Testing /projects capabilities
+
+MM/DD/YY - 15:50
+E |1.01 GET /projects, output the in the projects list
+E |1.02 HEAD /projects, nothing is returned in body
+E |1.03 POST /projects, allows to create a project without ID. Generates the next available ID number (2 in this case)
+
+
+2- Testing /projects/:id capabilities
+
+MM/DD/YY - 15:52
+
+E |1.04 GET /projects/1, outputs entry 1 in projects list
+E |1.05 GET /projects/2, outputs entry 2 in projects list
+E |1.06 GET /projects/3, outputs error (404 Not found) as expected
+
+E |1.07 HEAD /projects/1, returns empty body, no error
+E |1.08 HEAD /projects/3, returns empty body, no error handling - 404 not found 
+
+E |1.09 POST /projects/3, returns error message as expected
+E |1.10 POST /projects/2, returns project 2 unchanged
+E |1.11 POST /projects/2 with body:{"title": "project 2"} returns project 2 with changed title
+E |1.12 POST /projects/2 with body:{"id": "2"},  returns {"errorMessages": ["Failed Validation: id should be ID"]}
+E |1.13 POST /projects/2 with input: {"title": "project 2",  "completed": true}
+returns {
+    "id": "2",
+    "title": "project 2",
+    "completed": "true",
+    "active": "false",
+    "description": ""
+}, as expected
+
+E |1.14  PUT /projects/1 with input: {"title": "project 1"}
+returns {
+    "id": "1",
+    "title": "project 1",
+    "completed": "false",
+    "active": "false",
+    "description": ""
+} as expected
+
+E |1.15 DELETE /projects/3 empty body output as expected
+E |1.16 DELETE /projects/2, empty body output, 202 OK
+
+Potential vulnerability: No response message => the user can't know if it was successfully deleted or not. Check this for other delete capabilities
+
+
+3- Testing /projects/:id/categories capabilities. 
+
+MM/DD/YY - 16:05
+
+N |1.17 POST/projects/2/categories with body: {
+    "categories": [
+        {
+            "title": ", quis nostrud exerc",
+            "description": "si ut aliquip ex eaa"
+        }
+    ]
+} ID nb 4 generated, why not 1?
+
+Potential vulnerability: ID numbers are difficult to keep track of. Test how the ID numbers are incremented throughout projects 
+
+E |1.18 GET /projects/1/categories, gets the categories of project 2
+N |1.19 GET /projects/2/categories, gets the categories of project 1. However, project 2 does not exist => BUG
+N |1.20 GET /projects/anything/categories, gets the categories of project 1. However none of these projects exist => BUG
+
+E |1.21 HEAD /projects/1/categories, gets the categories of project 1, returns empty 
+
+E |1.22 POST /projects/1/categories with body:
+{
+  "title": "sed do eiusmod tempo"
+} 
+Category succesfully created with next available ID count in project with ID 1, but no output message
+
+E |1.23 POST /projects/2/categories with same body, Error message shown, no parent thing found, as expected
+
+N |1.24 POST /projects/1/categories {id:15} as json -> "Could not find thing matching value for id"
+
+N |1.25 POST /projects/1/categories {id:"15"} as json -> created successfully
+
+Bug: A string value is expected, but that cannot be created using XML.
+
+
+4- Testing /projects/:id/tasks capabilities. 
+
+MM/DD/YY - 16:25
+
+E |1.26 POST /projects/1/tasks, with input body (without input body: title field mandatory message):
+ { "title": "sed do eiusmod tempo"}, 
+ outputs {
+    "id": "8",
+    "title": "sed do eiusmod tempo",
+    "doneStatus": "false",
+    "description": "",
+    "tasksof": [
+        {
+            "id": "1"
+        }
+    ]
+}
+
+E |1.27 GET /projects/1/tasks, outputs project tasks with ID number 8, as expected
+
+E |1.28 HEAD /projects/1/tasks, 200 OK returns empty body 
+
+
+
+5- Testing /projects/:id/tasks/:id capabilities. 
+
+MM/DD/YY - 16:28
+
+E |1.29 DELETE /projects/1/tasks/8, deletes the task 8 from projects, but doesn't return succesful deletion message
+N |1.30 DELETE /projects/5/tasks/8, returns no instance error message
+
+6- Testing undocumented capabilities
+
+MM/DD/YY - 16:32
+begin testing undocumented capabilties 
+U | 1.31 DELETE /projects, error 405 method not allowed (Screenshots/1.16.png)
+U | 1.32 PUT /projects, error 405 method not allowed 
+U | 1.33 OPTIONS /projects, 200 ok with no body returned
+
+U | 1.34 PATCH /projects/1, error 405 method not allowed 
+U | 1.35 OPTIONS /projects/1, 200 ok with no body returned 
+
+U | 1.36 PUT /projects/1/categories, error 405 method not allowed 
+U | 1.37 PATCH /projects/1/categories, error 405 method not allowed 
+U | 1.38 OPTIONS /projects/1/categories, 200 ok with no body returned 
+
+END --------------------------------------------
+
+SESSION FINDINGS -------------------------------
+-> For JSON inputs, ID's needs to be created as a string input. However, the string format for ID isn't supported in XML so this would cause bugs.
+-> The ID generation continues within the whole /projects endpoint, so the next available ID is taken, and a sub ID count isn't created
+
+CONCERNS ---------------------------------------
+-> error messages for deletion aren't sent to the user, no way of verifying succesful deletion
+
+TEST IDEAS -------------------------------------
+-> Tested outputs in JSON format, should verify if API is capable to output correct results in XML format (only observed for ID input for now)
+-> Test different attribute types (like null values, strings instead of Integers) to see if errors are handled properly
