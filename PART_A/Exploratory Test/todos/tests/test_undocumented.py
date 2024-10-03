@@ -1,6 +1,5 @@
 import pytest
 import requests
-import random
 import json
 
 API_URL = "http://localhost:4567"
@@ -11,10 +10,11 @@ def ensure_system_ready():
     assert response.status_code == 200, "API is not active"
 
 
-def restore_system_state(initial_state):
-    current_state = requests.get(API_URL + "/todos").json()
-    current_ids = {todo["id"] for todo in current_state["todos"]}
-    initial_ids = {todo["id"] for todo in initial_state["todos"]}
+def create_todo(title="Default Title", description="Default Description"):
+    data = {"title": title, "description": description}
+    response = requests.post(API_URL + "/todos", json=data)
+    assert response.status_code == 201, "Failed to create todo"
+    return response.json()["id"]
 
 
 #### Additional Tests for Method Not Allowed and OPTIONS ####
@@ -50,10 +50,7 @@ def test_options_todos():
 
 
 def test_patch_todos_id():
-    data = {"title": " title", "description": "description"}
-    response = requests.post(API_URL + "/todos", json=data)
-    assert response.status_code == 201, "Failed to create todo"
-    todo_id = response.json()["id"]
+    todo_id = create_todo()
 
     patch_data = {"title": "patched_title"}
     response = requests.patch(API_URL + f"/todos/{todo_id}", json=patch_data)
@@ -66,10 +63,7 @@ def test_patch_todos_id():
 
 
 def test_options_todos_id():
-    data = {"title": " title", "description": "description"}
-    response = requests.post(API_URL + "/todos", json=data)
-    assert response.status_code == 201, "Failed to create todo"
-    todo_id = response.json()["id"]
+    todo_id = create_todo()
 
     response = requests.options(API_URL + f"/todos/{todo_id}")
     assert (
@@ -84,10 +78,7 @@ def test_options_todos_id():
 
 
 def test_put_todos_id_categories():
-    data = {"title": " title", "description": "description"}
-    response = requests.post(API_URL + "/todos", json=data)
-    assert response.status_code == 201, "Failed to create todo"
-    todo_id = response.json()["id"]
+    todo_id = create_todo()
 
     update_data = {"title": "updated_category"}
     response = requests.put(API_URL + f"/todos/{todo_id}/categories", json=update_data)
@@ -100,10 +91,7 @@ def test_put_todos_id_categories():
 
 
 def test_patch_todos_id_categories():
-    data = {"title": " title", "description": "description"}
-    response = requests.post(API_URL + "/todos", json=data)
-    assert response.status_code == 201, "Failed to create todo"
-    todo_id = response.json()["id"]
+    todo_id = create_todo()
 
     patch_data = {"title": "patched_category"}
     response = requests.patch(API_URL + f"/todos/{todo_id}/categories", json=patch_data)
@@ -116,10 +104,7 @@ def test_patch_todos_id_categories():
 
 
 def test_options_todos_id_categories():
-    data = {"title": " title", "description": "description"}
-    response = requests.post(API_URL + "/todos", json=data)
-    assert response.status_code == 201, "Failed to create todo"
-    todo_id = response.json()["id"]
+    todo_id = create_todo()
 
     response = requests.options(API_URL + f"/todos/{todo_id}/categories")
     assert (
