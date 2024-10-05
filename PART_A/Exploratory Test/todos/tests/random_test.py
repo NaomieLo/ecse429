@@ -2,7 +2,7 @@ import random
 import pytest
 import requests
 
-
+# importing tests from different modules
 from test_documented import (
     test_get_todos,
     test_post_todos,
@@ -46,6 +46,7 @@ API_URL = "http://localhost:4567"
 
 
 def ensure_system_ready():
+    # check if api is up and running
     try:
         response = requests.get(API_URL)
         assert response.status_code == 200, "API is not active"
@@ -56,7 +57,7 @@ def ensure_system_ready():
 def test_summary():
     passed_tests = 0
     failed_tests = 0
-    # Gather all test functions from different modules
+    # gather all test functions from different modules
     test_functions = [
         test_post_todos_malformed_json,
         test_post_todos_malformed_xml,
@@ -92,10 +93,11 @@ def test_summary():
         test_get_todos_id_taskof,
     ]
 
-    # random.seed(42)  # Set a fixed seed for reproducibility
+    # shuffle tests for random execution order
     random.shuffle(test_functions)
 
     print("")
+    # run each test and track pass/fail counts
     for test in test_functions:
         try:
             test()
@@ -105,13 +107,17 @@ def test_summary():
             print(f"Test {test.__name__}: FAILED - {e}")
             failed_tests += 1
 
+    # summary of test results
     print("\nSummary:")
     print(f"Total tests run: {len(test_functions)}")
     print(f"Passed: {passed_tests}")
     print(f"Failed: {failed_tests}")
 
 
+# Running all tests
 if __name__ == "__main__":
+
+    # check that system is runnig
     try:
         ensure_system_ready()
         run_tests = True
@@ -119,6 +125,7 @@ if __name__ == "__main__":
         print(f"System not ready: {e}")
         run_tests = False
 
+    # run the tests and shit down after
     if run_tests:
         pytest.main([__file__, "-s"])
         response = requests.get(API_URL)

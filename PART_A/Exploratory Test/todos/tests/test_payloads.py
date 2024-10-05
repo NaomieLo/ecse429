@@ -14,11 +14,13 @@ def ensure_system_ready():
 
 
 def test_post_xml_fail():
+    # create todo for testing invalid xml post
     data = {"title": "test_title", "description": "test_description"}
     response = requests.post(API_URL + "/todos", json=data)
-    assert response.status_code == 201, "Failed to create todo"
+    assert response.status_code == 201, "failed to create todo"
     todo_id = response.json()["id"]
 
+    # attempt to post invalid xml to the category endpoint
     invalid_xml = """<todos>
                        <id>10</id>
                      </todos>"""
@@ -28,18 +30,21 @@ def test_post_xml_fail():
     )
     assert (
         response.status_code == 400
-    ), f"POST /todos/{todo_id}/categories with invalid XML did not return 400"
+    ), f"POST /todos/{todo_id}/categories with invalid xml did not return 400"
 
+    # cleanup
     response = requests.delete(API_URL + f"/todos/{todo_id}")
     assert response.status_code in [200, 204], f"DELETE /todos/{todo_id} failed"
 
 
 def test_post_xml_pass():
+    # create todo for testing valid xml post
     data = {"title": "test_title", "description": "test_description"}
     response = requests.post(API_URL + "/todos", json=data)
-    assert response.status_code == 201, "Failed to create todo"
+    assert response.status_code == 201, "failed to create todo"
     todo_id = response.json()["id"]
 
+    # attempt to post valid xml to category endpoint
     valid_xml = """<category>
                      <title>title</title>
                    </category>"""
@@ -49,8 +54,9 @@ def test_post_xml_pass():
     )
     assert (
         response.status_code == 200 or response.status_code == 201
-    ), f"POST /todos/{todo_id}/categories with valid XML did not return 200 or 201"
+    ), f"POST /todos/{todo_id}/categories with valid xml did not return 200 or 201"
 
+    # delete category if created
     category_id = None
     if response.status_code == 201:
         category_data = response.json()
@@ -64,22 +70,26 @@ def test_post_xml_pass():
             204,
         ], f"DELETE /categories/{category_id} failed"
 
+    # cleanup
     response = requests.delete(API_URL + f"/todos/{todo_id}")
     assert response.status_code in [200, 204], f"DELETE /todos/{todo_id} failed"
 
 
 def test_post_todos_malformed_json():
+    # post with malformed json data
     malformed_json = '{"title": "test_title", "description": "test_description"'
     headers = {"Content-Type": "application/json"}
 
     response = requests.post(API_URL + "/todos", data=malformed_json, headers=headers)
 
+    # expecting bad request response due to malformed json
     assert (
         response.status_code == 400
-    ), f"POST /todos with malformed JSON did not return 400 as expected. Got {response.status_code} with response: {response.text}"
+    ), f"POST /todos with malformed json did not return 400 as expected. got {response.status_code} with response: {response.text}"
 
 
 def test_post_todos_malformed_xml():
+    # post with malformed xml data
     malformed_xml = """<todos>
                          <title>title
                        </todos>"""
@@ -87,9 +97,10 @@ def test_post_todos_malformed_xml():
 
     response = requests.post(API_URL + "/todos", data=malformed_xml, headers=headers)
 
+    # expecting bad request response due to malformed xml
     assert (
         response.status_code == 400
-    ), f"POST /todos with malformed XML did not return 400 as expected. Got {response.status_code} with response: {response.text}"
+    ), f"POST /todos with malformed xml did not return 400 as expected. got {response.status_code} with response: {response.text}"
 
 
 def test_summary():
@@ -120,6 +131,8 @@ def test_summary():
 
 # Running all tests
 if __name__ == "__main__":
+
+    # check that system is runnig
     try:
         ensure_system_ready()
         run_tests = True
@@ -127,6 +140,7 @@ if __name__ == "__main__":
         print(f"System not ready: {e}")
         run_tests = False
 
+    # run the tests and shit down after
     if run_tests:
         pytest.main([__file__, "-s"])
         response = requests.get(API_URL)

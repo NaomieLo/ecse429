@@ -21,46 +21,47 @@ def create_todo(title="Default Title", description="Default Description"):
 
 
 #### TODOS ####
-
-
 def test_get_todos():
-    # Create a new todo for validation
+    # create todo for get validation
     todo_id = create_todo("Test Todo for GET", "Test description for GET")
 
-    # Perform the GET request
+    # perform get request
     response = requests.get(API_URL + "/todos")
     assert response.status_code == 200, "GET /todos failed"
 
-    # Verify that the todo we created is in the list
+    # verify that created todo is in the response
     todos = response.json()["todos"]
     assert any(
         todo["id"] == todo_id for todo in todos
-    ), "Newly created todo not found in GET response"
+    ), "created todo not found in get response"
 
-    # Clean up by deleting the todo
+    # cleanup
     requests.delete(f"{API_URL}/todos/{todo_id}")
 
 
 def test_post_todos():
+    # create and post todo
     todo_id = create_todo("Test Todo", "Test description")
 
-    # Verify the todo was created correctly
+    # verify created todo data matches expected values
     response = requests.get(API_URL + f"/todos/{todo_id}")
-    assert response.status_code == 200, f"Failed to fetch todo with id {todo_id}"
+    assert response.status_code == 200, f"failed to fetch todo with id {todo_id}"
     todo_data = response.json()["todos"][0]
-    assert todo_data["title"] == "Test Todo", "Title does not match expected value"
+    assert todo_data["title"] == "Test Todo", "title does not match expected value"
     assert (
         todo_data["description"] == "Test description"
-    ), "Description does not match expected value"
+    ), "description does not match expected value"
 
-    # Clean up by deleting the todo
+    # cleanup
     requests.delete(f"{API_URL}/todos/{todo_id}")
 
 
 def test_head_todos():
+    # perform head request on todos
     response = requests.head(API_URL + "/todos")
     assert response.status_code == 200, "HEAD /todos failed"
-    # There should be no content in the response for a HEAD request
+
+    # head requests should have no content
     assert response.content == b"", "HEAD request returned unexpected content"
 
 
@@ -68,86 +69,96 @@ def test_head_todos():
 
 
 def test_get_todos_id():
+    # create a todo to fetch by id
     todo_id = create_todo("Test Todo", "Test description")
 
+    # get todo by id
     response = requests.get(API_URL + f"/todos/{todo_id}")
     assert response.status_code == 200, f"GET /todos/{todo_id} failed"
 
-    # Verify the correct todo data
+    # verify todo data matches expected values
     todo_data = response.json()["todos"][0]
-    assert (
-        todo_data["title"] == "Test Todo"
-    ), "Fetched todo title does not match expected value"
+    assert todo_data["title"] == "Test Todo", "fetched title does not match"
     assert (
         todo_data["description"] == "Test description"
-    ), "Fetched todo description does not match expected value"
+    ), "fetched description does not match"
 
+    # cleanup
     requests.delete(f"{API_URL}/todos/{todo_id}")
 
 
 def test_head_todos_id():
+    # create a todo to perform head request on
     todo_id = create_todo("Test Todo", "Test description")
 
+    # head request for specific todo
     response = requests.head(API_URL + f"/todos/{todo_id}")
     assert response.status_code == 200, f"HEAD /todos/{todo_id} failed"
     assert response.content == b"", "HEAD request returned unexpected content"
 
+    # cleanup
     requests.delete(f"{API_URL}/todos/{todo_id}")
 
 
 def test_post_todos_id():
+    # create a todo for post update
     todo_id = create_todo("Test Todo", "Test description")
 
+    # post update data to existing todo
     update_data = {"title": "Updated Title", "description": "Updated description"}
     response = requests.post(API_URL + f"/todos/{todo_id}", json=update_data)
     assert response.status_code in [200, 204], f"POST /todos/{todo_id} failed"
 
-    # Verify that the POST actually updated the resource
+    # verify that post updated the data correctly
     response = requests.get(API_URL + f"/todos/{todo_id}")
     assert (
         response.status_code == 200
-    ), f"Failed to fetch todo with id {todo_id} after POST"
+    ), f"failed to fetch updated todo with id {todo_id}"
     todo_data = response.json()["todos"][0]
-    assert (
-        todo_data["title"] == "Updated Title"
-    ), "POST request did not update the title correctly"
+    assert todo_data["title"] == "Updated Title", "title was not updated correctly"
     assert (
         todo_data["description"] == "Updated description"
-    ), "POST request did not update the description correctly"
+    ), "description was not updated correctly"
 
+    # cleanup
     requests.delete(f"{API_URL}/todos/{todo_id}")
 
 
 def test_put_todos_id():
+    # create a todo to update with put request
     todo_id = create_todo("Test Todo", "Test description")
 
+    # perform put request to update todo
     update_data = {"title": "Updated Title", "description": "Updated description"}
     response = requests.put(API_URL + f"/todos/{todo_id}", json=update_data)
     assert response.status_code in [200, 204], f"PUT /todos/{todo_id} failed"
 
-    # Verify the todo was updated correctly
+    # verify that todo was updated correctly
     response = requests.get(API_URL + f"/todos/{todo_id}")
     assert (
         response.status_code == 200
-    ), f"Failed to fetch updated todo with id {todo_id}"
+    ), f"failed to fetch updated todo with id {todo_id}"
     todo_data = response.json()["todos"][0]
-    assert todo_data["title"] == "Updated Title", "Title was not updated correctly"
+    assert todo_data["title"] == "Updated Title", "title was not updated correctly"
     assert (
         todo_data["description"] == "Updated description"
-    ), "Description was not updated correctly"
+    ), "description was not updated correctly"
 
+    # cleanup
     requests.delete(f"{API_URL}/todos/{todo_id}")
 
 
 def test_delete_todos_id():
+    # create a todo to delete
     todo_id = create_todo("Test Todo", "Test description")
 
+    # delete the created todo
     response = requests.delete(API_URL + f"/todos/{todo_id}")
     assert response.status_code in [200, 204], f"DELETE /todos/{todo_id} failed"
 
-    # Verify the todo was deleted
+    # verify that todo no longer exists
     response = requests.get(API_URL + f"/todos/{todo_id}")
-    assert response.status_code == 404, f"Deleted todo with id {todo_id} still exists"
+    assert response.status_code == 404, f"deleted todo with id {todo_id} still exists"
 
 
 #### TODOS/:ID/CATEGORIES ####
@@ -159,10 +170,11 @@ def test_get_todos_id_categories():
     response = requests.get(API_URL + f"/todos/{todo_id}/categories")
     assert response.status_code == 200, f"GET /todos/{todo_id}/categories failed"
 
-    # Verify response structure is as expected
+    # check expected response structure
     categories = response.json()
     assert "categories" in categories, "Expected 'categories' key in response"
 
+    # cleanup
     requests.delete(f"{API_URL}/todos/{todo_id}")
 
 
@@ -170,17 +182,19 @@ def test_post_todos_id_categories():
     todo_id = create_todo("Test Todo", "Test description")
     category_data = {"title": "Test Category"}
 
+    # create a new category
     response_category = requests.post(API_URL + "/categories", json=category_data)
     assert response_category.status_code == 201, "Failed to create category"
     category_id = response_category.json()["id"]
 
+    # link the category to the todo
     link_data = {"id": category_id}
     response_link = requests.post(
         API_URL + f"/todos/{todo_id}/categories", json=link_data
     )
     assert response_link.status_code == 201, f"POST /todos/{todo_id}/categories failed"
 
-    # Verify the category is linked to the todo
+    # verify the category is linked to the todo
     response = requests.get(API_URL + f"/todos/{todo_id}/categories")
     assert (
         response.status_code == 200
@@ -190,6 +204,7 @@ def test_post_todos_id_categories():
         category["id"] == category_id for category in categories
     ), "Category not linked to todo as expected"
 
+    # cleanup
     requests.delete(f"{API_URL}/todos/{todo_id}")
     requests.delete(f"{API_URL}/categories/{category_id}")
 
@@ -201,6 +216,7 @@ def test_head_todos_id_categories():
     assert response.status_code == 200, f"HEAD /todos/{todo_id}/categories failed"
     assert response.content == b"", "HEAD request returned unexpected content"
 
+    # cleanup
     requests.delete(f"{API_URL}/todos/{todo_id}")
 
 
@@ -211,19 +227,21 @@ def test_delete_todos_id_categories_id():
     todo_id = create_todo("Test Todo", "Test description")
     category_data = {"title": "Test Category"}
 
+    # create category and link it to todo
     response_category = requests.post(API_URL + "/categories", json=category_data)
     assert response_category.status_code == 201, "Failed to create category"
     category_id = response_category.json()["id"]
 
     requests.post(API_URL + f"/todos/{todo_id}/categories", json={"id": category_id})
 
+    # delete the link between todo and category
     response = requests.delete(API_URL + f"/todos/{todo_id}/categories/{category_id}")
     assert response.status_code in [
         200,
         204,
     ], f"DELETE /todos/{todo_id}/categories/{category_id} failed"
 
-    # Verify the category is no longer linked to the todo
+    # verify the category is no longer linked
     response = requests.get(API_URL + f"/todos/{todo_id}/categories")
     assert (
         response.status_code == 200
@@ -233,6 +251,7 @@ def test_delete_todos_id_categories_id():
         category["id"] == category_id for category in categories
     ), "Category still linked to todo after deletion"
 
+    # cleanup
     requests.delete(f"{API_URL}/todos/{todo_id}")
     requests.delete(f"{API_URL}/categories/{category_id}")
 
@@ -247,24 +266,25 @@ def test_get_todos_id_taskof():
     assert response.status_code == 200, f"GET /todos/{todo_id}/tasksof failed"
     task_data = response.json()
 
-    # Confirming response structure
+    # confirm response contains 'projects' key
     assert (
         "projects" in task_data
     ), f"Expected 'projects' key in response, got {task_data.keys()}"
 
+    # cleanup
     requests.delete(f"{API_URL}/todos/{todo_id}")
 
 
 def test_post_todos_id_taskof():
     todo_id = create_todo("Test Todo", "Test description")
 
-    # Create a new task
+    # create a new task and link to todo
     task_data = {"title": "New Task2", "description": "Task description"}
     response = requests.post(API_URL + f"/todos/{todo_id}/tasksof", json=task_data)
     assert response.status_code == 201, f"POST /todos/{todo_id}/tasksof failed"
     created_task = response.json()
 
-    # Verify the task was created correctly and linked to the todo
+    # verify the task is linked properly
     assert "id" in created_task, "No 'id' field in task response"
     task_id = created_task["id"]
 
@@ -277,9 +297,9 @@ def test_post_todos_id_taskof():
         task["id"] == task_id for task in tasks
     ), f"Task with id {task_id} not found in todo {todo_id}"
 
-    # Clean up
+    # cleanup
     requests.delete(f"{API_URL}/todos/{todo_id}")
-    requests.delete(f"{API_URL}/projects/{task_id}")  # Clean up the created project
+    requests.delete(f"{API_URL}/projects/{task_id}")
 
 
 def test_head_todos_id_taskof():
@@ -288,6 +308,7 @@ def test_head_todos_id_taskof():
     response = requests.head(API_URL + f"/todos/{todo_id}/tasksof")
     assert response.status_code == 200, f"HEAD /todos/{todo_id}/tasksof failed"
 
+    # cleanup
     requests.delete(f"{API_URL}/todos/{todo_id}")
 
 
@@ -297,13 +318,13 @@ def test_head_todos_id_taskof():
 def test_delete_todos_id_tasksof_id():
     todo_id = create_todo("Test Todo", "Test description")
 
-    # Create a new task and link it to the todo
+    # create task and link to todo
     task_data = {"title": "New Task1", "description": "Task description"}
     response_task = requests.post(API_URL + f"/todos/{todo_id}/tasksof", json=task_data)
     assert response_task.status_code == 201, "Failed to create Task"
     task_id = response_task.json()["id"]
 
-    # Verify that the task is linked to the todo
+    # verify task is linked to todo
     response_check = requests.get(API_URL + f"/todos/{todo_id}/tasksof")
     assert (
         response_check.status_code == 200
@@ -313,14 +334,14 @@ def test_delete_todos_id_tasksof_id():
         task["id"] == task_id for task in tasks
     ), f"Task with id {task_id} not linked to todo {todo_id} as expected"
 
-    # Delete the task link
+    # delete the link between task and todo
     response_delete = requests.delete(API_URL + f"/todos/{todo_id}/tasksof/{task_id}")
     assert response_delete.status_code in [
         200,
         204,
     ], f"DELETE /todos/{todo_id}/tasksof/{task_id} failed"
 
-    # Verify the task link was removed
+    # verify task link removed
     response_check_after = requests.get(API_URL + f"/todos/{todo_id}/tasksof")
     assert (
         response_check_after.status_code == 200
@@ -330,16 +351,15 @@ def test_delete_todos_id_tasksof_id():
         task["id"] == task_id for task in tasks_after
     ), f"Task with id {task_id} still linked to todo {todo_id}"
 
-    # Clean up
+    # cleanup
     requests.delete(f"{API_URL}/todos/{todo_id}")
-    requests.delete(
-        f"{API_URL}/projects/{task_id}"
-    )  # Clean up the project as well, since it has a relationship with the todo
+    requests.delete(f"{API_URL}/projects/{task_id}")
 
 
 #### TEST INSTABILITIES ####
 
 
+# validate GET request for nonexistent todo returns 404
 def test_get_todos_not_found():
     response = requests.get(API_URL + "/todos/10000")
     assert (
@@ -347,6 +367,7 @@ def test_get_todos_not_found():
     ), "GET /todos/10000 did not return 404 as expected"
 
 
+# validate HEAD request for nonexistent todo returns 404
 def test_head_todos_not_found():
     response = requests.head(API_URL + "/todos/10000")
     assert (
@@ -354,6 +375,7 @@ def test_head_todos_not_found():
     ), "HEAD /todos/10000 did not return 404 as expected"
 
 
+# validate DELETE request for nonexistent todo returns 404
 def test_delete_todos_not_found():
     response = requests.delete(API_URL + "/todos/10000")
     assert (
@@ -361,6 +383,7 @@ def test_delete_todos_not_found():
     ), "DELETE /todos/10000 did not return 404 as expected"
 
 
+# test summary that ensures all tests are run and results are displayed
 def test_summary():
     ensure_system_ready()
 
@@ -408,6 +431,8 @@ def test_summary():
 
 # Running all tests
 if __name__ == "__main__":
+
+    # check that system is runnig
     try:
         ensure_system_ready()
         run_tests = True
@@ -415,6 +440,7 @@ if __name__ == "__main__":
         print(f"System not ready: {e}")
         run_tests = False
 
+    # run the tests and shit down after
     if run_tests:
         pytest.main([__file__, "-s"])
         response = requests.get(API_URL)

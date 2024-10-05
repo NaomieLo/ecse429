@@ -20,9 +20,6 @@ def create_todo(title="Default Title", description="Default Description"):
     return response.json()["id"]
 
 
-#### Additional Tests for Method Not Allowed and OPTIONS ####
-
-
 def test_delete_todos():
     response = requests.delete(API_URL + "/todos")
     assert (
@@ -61,6 +58,7 @@ def test_patch_todos_id():
         response.status_code == 405
     ), f"PATCH /todos/{todo_id} failed with unexpected status code"
 
+    # cleanup
     response = requests.delete(API_URL + f"/todos/{todo_id}")
     assert response.status_code in [200, 204], f"DELETE /todos/{todo_id} failed"
 
@@ -76,6 +74,7 @@ def test_options_todos_id():
         response.content == b""
     ), f"OPTIONS /todos/{todo_id} returned unexpected content"
 
+    # cleanup
     response = requests.delete(API_URL + f"/todos/{todo_id}")
     assert response.status_code in [200, 204], f"DELETE /todos/{todo_id} failed"
 
@@ -89,6 +88,7 @@ def test_put_todos_id_categories():
         response.status_code == 405
     ), f"PUT /todos/{todo_id}/categories failed with unexpected status code"
 
+    # cleanup
     response = requests.delete(API_URL + f"/todos/{todo_id}")
     assert response.status_code in [200, 204], f"DELETE /todos/{todo_id} failed"
 
@@ -102,6 +102,7 @@ def test_patch_todos_id_categories():
         response.status_code == 405
     ), f"PATCH /todos/{todo_id}/categories failed with unexpected status code"
 
+    # cleanup
     response = requests.delete(API_URL + f"/todos/{todo_id}")
     assert response.status_code in [200, 204], f"DELETE /todos/{todo_id} failed"
 
@@ -117,6 +118,7 @@ def test_options_todos_id_categories():
         response.content == b""
     ), f"OPTIONS /todos/{todo_id}/categories returned unexpected content"
 
+    # cleanup
     response = requests.delete(API_URL + f"/todos/{todo_id}")
     assert response.status_code in [200, 204], f"DELETE /todos/{todo_id} failed"
 
@@ -154,6 +156,8 @@ def test_summary():
 
 # Running all tests
 if __name__ == "__main__":
+
+    # check that system is runnig
     try:
         ensure_system_ready()
         run_tests = True
@@ -161,6 +165,7 @@ if __name__ == "__main__":
         print(f"System not ready: {e}")
         run_tests = False
 
+    # run the tests and shit down after
     if run_tests:
         pytest.main([__file__, "-s"])
         response = requests.get(API_URL)
