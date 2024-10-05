@@ -1,8 +1,8 @@
 # ECSE429
 
-**Group:** 6
+### Group: 6
 
-**Students:** 
+### Students
 Deniz Emre
 deniz.emre@mail.mcgill.ca
 261029931
