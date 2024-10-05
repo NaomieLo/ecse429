@@ -131,13 +131,52 @@ N | 1.25 GET /todos/1/categories with XML input below, 400 bad request error ind
   <id>"10"</id>
 </todos>
 
-N | 1.26 GET /todos/1 with JSOM input below,  400 bad request error indicating id is invalid 
+N | 1.26 GET /todos/1 with JSON input below,  400 bad request error indicating id is invalid 
 {
     "id": "1"
 }
 
 10/01/24 - 14:40
-creating a small script to test capabilities
+E | 1.27 POST /todos with JSON input below, 400 bad request wanted to see what happens with invalid parameter
+{
+  "title": "cing elit, sed do ei",
+  "description": "nulla pariatur. Exce",
+  "hi": "bye"
+}
+
+10/01/24 - 14:42
+U | 1.28 OPTIONS /todos with XML input below, 400 bad request wanted to see what happens with invalid parameter
+<todo>
+  <doneStatus>true</doneStatus>
+  <description>iusmod tempor incidi</description>
+  <id>64</id>
+  <HI>ididunt ut labore et</HI>
+</todo>
+
+E | 1.29 DELETE /todos with JSON input below, 405 Method Not Allowed wanted to see what happens with invalid parameter
+{
+  "title": "cing elit, sed do ei",
+  "description": "nulla pariatur. Exce",
+  "hi": "bye"
+}
+
+10/01/24 - 14:42
+E | 1.30 POST /todos with XML input below, created successfully with id 3
+<todo>
+  <title>hello world</title>
+</todo>"bye"
+
+
+E | 1.31 POST /todos/1/categories with XML input below, created successfully with id 5
+<todo>
+  <title>hello world</title>
+</todo>
+
+U | 1.32 DELETE /todos/1/categories with XML input below, 405 Method not allowed as expected
+<todo>
+  <title>hello world</title>
+</todo>
+
 
 END --------------------------------------------
 

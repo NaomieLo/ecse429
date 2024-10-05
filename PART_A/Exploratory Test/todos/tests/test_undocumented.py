@@ -93,6 +93,19 @@ def test_put_todos_id_categories():
     assert response.status_code in [200, 204], f"DELETE /todos/{todo_id} failed"
 
 
+def test_delete_todos_id_categories():
+    todo_id = create_todo()
+
+    response = requests.delete(API_URL + f"/todos/{todo_id}/categories")
+    assert (
+        response.status_code == 405
+    ), f"DELETE /todos/{todo_id}/categories failed with unexpected status code"
+
+    # cleanup
+    response = requests.delete(API_URL + f"/todos/{todo_id}")
+    assert response.status_code in [200, 204], f"DELETE /todos/{todo_id} failed"
+
+
 def test_patch_todos_id_categories():
     todo_id = create_todo()
 
@@ -136,6 +149,7 @@ def test_summary():
         test_put_todos_id_categories,
         test_patch_todos_id_categories,
         test_options_todos_id_categories,
+        test_delete_todos_id_categories,
     ]
 
     print("")

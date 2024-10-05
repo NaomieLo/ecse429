@@ -34,12 +34,24 @@ from test_undocumented import (
     test_put_todos_id_categories,
     test_patch_todos_id_categories,
     test_options_todos_id_categories,
+    test_delete_todos_id_categories,
 )
 from test_payloads import (
     test_post_todos_malformed_json,
     test_post_todos_malformed_xml,
     test_post_xml_pass,
     test_post_xml_fail,
+)
+
+from test_unexpected import (
+    test_post_todos_id_categories_id_generation,
+    test_get_todos_incorrect_categories,
+    test_get_todos_invalid_id_categories,
+    test_post_todos_id_categories_with_different_id_formats,
+    test_get_todos_incorrect_categories_allow_pass,
+    test_get_todos_invalid_id_categories_allow_pass,
+    test_post_todos_id_categories_with_string_id_allow_pass,
+    test_post_todos_id_categories_with_string_id_allow_pass,
 )
 
 API_URL = "http://localhost:4567"
@@ -79,18 +91,27 @@ def test_summary():
         test_head_todos_id,
         test_post_todos_id,
         test_put_todos_id,
-        test_delete_todos_id,
-        test_get_todos_id_categories,
-        test_post_todos_id_categories,
-        test_head_todos_id_categories,
-        test_delete_todos_id_categories_id,
-        test_get_todos_not_found,
-        test_head_todos_not_found,
-        test_delete_todos_not_found,
-        test_delete_todos_id_tasksof_id,
+        test_delete_todos,
+        test_put_todos,
+        test_patch_todos,
+        test_options_todos,
+        test_patch_todos_id,
+        test_options_todos_id,
+        test_put_todos_id_categories,
+        test_patch_todos_id_categories,
+        test_options_todos_id_categories,
+        test_delete_todos_id_categories,
         test_head_todos_id_taskof,
         test_post_todos_id_taskof,
         test_get_todos_id_taskof,
+        test_post_todos_id_categories_id_generation,
+        test_get_todos_incorrect_categories,
+        test_get_todos_invalid_id_categories,
+        test_post_todos_id_categories_with_different_id_formats,
+        test_get_todos_incorrect_categories_allow_pass,
+        test_get_todos_invalid_id_categories_allow_pass,
+        test_post_todos_id_categories_with_string_id_allow_pass,
+        test_post_todos_id_categories_with_string_id_allow_pass,
     ]
 
     # shuffle tests for random execution order
