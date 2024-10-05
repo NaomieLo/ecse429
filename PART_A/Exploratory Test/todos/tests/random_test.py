@@ -1,5 +1,7 @@
 import random
 import pytest
+import requests
+
 
 from test_documented import (
     test_get_todos,
@@ -39,6 +41,16 @@ from test_payloads import (
     test_post_xml_pass,
     test_post_xml_fail,
 )
+
+API_URL = "http://localhost:4567"
+
+
+def ensure_system_ready():
+    try:
+        response = requests.get(API_URL)
+        assert response.status_code == 200, "API is not active"
+    except requests.exceptions.ConnectionError:
+        raise AssertionError("API is not active or could not connect")
 
 
 def test_summary():
@@ -100,4 +112,20 @@ def test_summary():
 
 
 if __name__ == "__main__":
-    pytest.main([__file__, "-s"])
+    try:
+        ensure_system_ready()
+        run_tests = True
+    except AssertionError as e:
+        print(f"System not ready: {e}")
+        run_tests = False
+
+    if run_tests:
+        pytest.main([__file__, "-s"])
+        response = requests.get(API_URL)
+        assert response.status_code == 200, "API is already shutdown"
+        try:
+            response = requests.get(API_URL + "/shutdown")
+        except requests.exceptions.ConnectionError:
+            assert True
+    else:
+        print("Tests skipped: API is not running or could not be reached.")

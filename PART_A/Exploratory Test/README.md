@@ -2,9 +2,14 @@
 
 **Group:** 6
 
-**Students:** Naomie Lo, Deniz Emre
+**Students:** 
+Deniz Emre
+deniz.emre@mail.mcgill.ca
+261029931
 
-### Repo structure
+Naomie Lo
+naomie.lo@mail.mcgill.ca
+261018690
 
 ### Video of tests running
 
