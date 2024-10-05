@@ -3,15 +3,16 @@
 ### Group: 6
 
 ### Students
-Deniz Emre
-deniz.emre@mail.mcgill.ca
-261029931
+- **Deniz Emre**  
+  Email: deniz.emre@mail.mcgill.ca  
+  Student ID: 261029931  
 
-Naomie Lo
-naomie.lo@mail.mcgill.ca
-261018690
+- **Naomie Lo**  
+  Email: naomie.lo@mail.mcgill.ca  
+  Student ID: 261018690  
 
-### Video of tests running
+### Video of Tests Running
+[Add link here if applicable, using Markdown syntax like: [Video Link](URL)]
 
-
-### Important notes
+### Important Notes
+[Add any important notes here]
