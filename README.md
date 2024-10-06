@@ -12,7 +12,10 @@
   Student ID: 261018690  
 
 ### Video of Tests Running
-[Add link here if applicable, using Markdown syntax like: [Video Link](URL)]
+#### TODOS 
+[[https://drive.google.com/file/d/1KrEJxUTImHDT8tpWdCZqJ4WVEO2yYk_4/view?usp=sharing](URL)]
 
+#### PROJECTS
+ 
 ### Important Notes
 [Add any important notes here]
