@@ -13,9 +13,7 @@
 
 ### Video of Tests Running
 #### TODOS 
-[[https://drive.google.com/file/d/1KrEJxUTImHDT8tpWdCZqJ4WVEO2yYk_4/view?usp=sharing](URL)]
+[https://drive.google.com/file/d/1KrEJxUTImHDT8tpWdCZqJ4WVEO2yYk_4/view?usp=sharing](URL)
 
 #### PROJECTS
- 
-### Important Notes
-[Add any important notes here]
+
