@@ -13,7 +13,7 @@
 
 ### Video of Tests Running
 #### TODOS 
-[https://drive.google.com/file/d/1KrEJxUTImHDT8tpWdCZqJ4WVEO2yYk_4/view?usp=sharing](URL)
+[Watch todos test video here](https://drive.google.com/file/d/1KrEJxUTImHDT8tpWdCZqJ4WVEO2yYk_4/view?usp=sharing)
 
 #### PROJECTS
 
