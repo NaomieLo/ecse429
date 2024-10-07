@@ -136,6 +136,7 @@ def test_options_todos_id_categories():
     assert response.status_code in [200, 204], f"DELETE /todos/{todo_id} failed"
 
 
+# test summary that ensures all tests are run and results are displayed
 def test_summary():
     passed_tests = 0
     failed_tests = 0

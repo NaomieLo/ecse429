@@ -66,6 +66,7 @@ def ensure_system_ready():
         raise AssertionError("API is not active or could not connect")
 
 
+# test summary that ensures all tests are run and results are displayed
 def test_summary():
     passed_tests = 0
     failed_tests = 0

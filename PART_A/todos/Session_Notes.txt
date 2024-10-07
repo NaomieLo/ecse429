@@ -82,62 +82,62 @@ U | 1.18 PATCH /todos, error 405 method not allowed
 U | 1.19 OPTIONS /todos, 200 ok with no body returned (Screenshots/1.19.png)
 
 10/01/24 - 14:25
-U | 1.16 PATCH /todos/1, error 405 method not allowed 
-U | 1.17 OPTIONS /todos/1, 200 ok with no body returned 
+U | 1.17 PATCH /todos/1, error 405 method not allowed 
+U | 1.18 OPTIONS /todos/1, 200 ok with no body returned 
 
 10/01/24 - 14:28
-U | 1.18 PUT /todos/1/categories, error 405 method not allowed 
-U | 1.19 PATCH /todos/1/categories, error 405 method not allowed 
-U | 1.20 OPTIONS /todos/1/categories, 200 ok with no body returned 
+U | 1.20 PUT /todos/1/categories, error 405 method not allowed 
 U | 1.21 PATCH /todos/1/categories, error 405 method not allowed 
+U | 1.22 OPTIONS /todos/1/categories, 200 ok with no body returned 
+U | 1.23 PATCH /todos/1/categories, error 405 method not allowed 
 
 
 10/01/24 - 14:30
 begin testing with data that would be used, restarted api
-E | 1.22 POST /todos/1/catagories with JSON input below, want to test how deafult numbering of id work this assigned id 3 to new instance (Screenshot/1.22)
+E | 1.24 POST /todos/1/catagories with JSON input below, want to test how deafult numbering of id work this assigned id 3 to new instance (Screenshot/1.22)
 {
   "title": "hello"
 }
 
-E | 1.23 POST /todos/1/tasksof, want to test how deafult numbering of id work this assigned id 2 to new instance
+E | 1.25 POST /todos/1/tasksof, want to test how deafult numbering of id work this assigned id 2 to new instance
 {
   "title": "hello"
 }
 
-E | 1.24 POST /todos/1/tasksof, want to test how deafult numbering of id work this assigned id 3 to new instance
+E | 1.26 POST /todos/1/tasksof, want to test how deafult numbering of id work this assigned id 3 to new instance
 {
   "title": "hello"
 }
 
-E | 1.25 POST /todos/1/catagories with JSON input below, want to test how deafult numbering of id work this assigned id 4 to new instance (Screenshot/1.25)
+E | 1.27 POST /todos/1/catagories with JSON input below, want to test how deafult numbering of id work this assigned id 4 to new instance (Screenshot/1.25)
 {
   "title": "hello"
 }
 
 10/01/24 - 14:36
-E | 1.26 GET /todos/10000, error 404 not found as expected "Could not find any instances with todos/10000" (Screenshot/1.26.png)
-E | 1.27 HEAD /todos/10000, error 404 not found as expected "Could not find any instances with todos/10000"
-E | 1.28 DELETE /todos/10000, error 404 not found as expected "Could not find any instances with todos/10000"
+E | 1.28 GET /todos/10000, error 404 not found as expected "Could not find any instances with todos/10000" (Screenshot/1.26.png)
+E | 1.29 HEAD /todos/10000, error 404 not found as expected "Could not find any instances with todos/10000"
+E | 1.30 DELETE /todos/10000, error 404 not found as expected "Could not find any instances with todos/10000"
 
 
 10/01/24 - 14:37
-N | 1.29 POST /todos/1/categories with XML input below, 400 bad request error indicating id is invalid (Screenshot/1.29)
+N | 1.31 POST /todos/1/categories with XML input below, 400 bad request error indicating id is invalid (Screenshot/1.29)
 <todos>
   <id>10</id>
 </todos>
 
-N | 1.25 GET /todos/1/categories with XML input below, 400 bad request error indicating id is invalid 
+N | 1.32 GET /todos/1/categories with XML input below, 400 bad request error indicating id is invalid 
 <todos>
   <id>"10"</id>
 </todos>
 
-N | 1.26 GET /todos/1 with JSON input below,  400 bad request error indicating id is invalid 
+N | 1.33 GET /todos/1 with JSON input below,  400 bad request error indicating id is invalid 
 {
     "id": "1"
 }
 
 10/01/24 - 14:40
-E | 1.27 POST /todos with JSON input below, 400 bad request wanted to see what happens with invalid parameter
+E | 1.34 POST /todos with JSON input below, 400 bad request wanted to see what happens with invalid parameter
 {
   "title": "cing elit, sed do ei",
   "description": "nulla pariatur. Exce",
@@ -145,7 +145,7 @@ E | 1.27 POST /todos with JSON input below, 400 bad request wanted to see what h
 }
 
 10/01/24 - 14:42
-U | 1.28 OPTIONS /todos with XML input below, 400 bad request wanted to see what happens with invalid parameter
+U | 1.35 OPTIONS /todos with XML input below, 400 bad request wanted to see what happens with invalid parameter
 <todo>
   <doneStatus>true</doneStatus>
   <description>iusmod tempor incidi</description>
@@ -153,7 +153,7 @@ U | 1.28 OPTIONS /todos with XML input below, 400 bad request wanted to see what
   <HI>ididunt ut labore et</HI>
 </todo>
 
-E | 1.29 DELETE /todos with JSON input below, 405 Method Not Allowed wanted to see what happens with invalid parameter
+E | 1.36 DELETE /todos with JSON input below, 405 Method Not Allowed wanted to see what happens with invalid parameter
 {
   "title": "cing elit, sed do ei",
   "description": "nulla pariatur. Exce",
@@ -161,18 +161,18 @@ E | 1.29 DELETE /todos with JSON input below, 405 Method Not Allowed wanted to s
 }
 
 10/01/24 - 14:42
-E | 1.30 POST /todos with XML input below, created successfully with id 3
+E | 1.37 POST /todos with XML input below, created successfully with id 3
 <todo>
   <title>hello world</title>
 </todo>"bye"
 
 
-E | 1.31 POST /todos/1/categories with XML input below, created successfully with id 5
+E | 1.38 POST /todos/1/categories with XML input below, created successfully with id 5
 <todo>
   <title>hello world</title>
 </todo>
 
-U | 1.32 DELETE /todos/1/categories with XML input below, 405 Method not allowed as expected
+U | 1.39 DELETE /todos/1/categories with XML input below, 405 Method not allowed as expected
 <todo>
   <title>hello world</title>
 </todo>

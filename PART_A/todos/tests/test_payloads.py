@@ -103,6 +103,7 @@ def test_post_todos_malformed_xml():
     ), f"POST /todos with malformed xml did not return 400 as expected. got {response.status_code} with response: {response.text}"
 
 
+# test summary that ensures all tests are run and results are displayed
 def test_summary():
     passed_tests = 0
     failed_tests = 0
