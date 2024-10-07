@@ -5,11 +5,10 @@ For each capability create a script or small program to demonstrate the capabili
 Exercise each capability identified with data typical to the intended use of the application.
 
 TIME ------------------------------------------
-MM/DD/YY - HH:MM
+10/03/24 - HH:MM
 
 ENV -------------------------------------------
 Windows 10
-Screen resolution: 1920x1080
 
 DESCRIPTION  ----------------------------------
 runTodoManagerRestAPI-1.5.5.jar
@@ -26,10 +25,9 @@ U - Undocumented
 
 TEST NOTES -------------------------------------
 
-
 1- Testing /projects capabilities
 
-MM/DD/YY - 15:50
+10/03/24 - 15:50
 E |1.01 GET /projects, output the in the projects list
 E |1.02 HEAD /projects, nothing is returned in body
 E |1.03 POST /projects, allows to create a project without ID. Generates the next available ID number (2 in this case)
@@ -37,7 +35,7 @@ E |1.03 POST /projects, allows to create a project without ID. Generates the nex
 
 2- Testing /projects/:id capabilities
 
-MM/DD/YY - 15:52
+10/03/24 - 15:52
 
 E |1.04 GET /projects/1, outputs entry 1 in projects list
 E |1.05 GET /projects/2, outputs entry 2 in projects list
@@ -73,10 +71,9 @@ E |1.16 DELETE /projects/2, empty body output, 202 OK
 
 Potential vulnerability: No response message => the user can't know if it was successfully deleted or not. Check this for other delete capabilities
 
-
 3- Testing /projects/:id/categories capabilities. 
 
-MM/DD/YY - 16:05
+10/03/24 - 16:05
 
 N |1.17 POST/projects/2/categories with body:
         {
@@ -108,10 +105,9 @@ N |1.25 POST /projects/2/categories {id:"3"} as json -> created successfully (Sc
 
 Bug: A string value is expected, but that cannot be created using XML.
 
-
 4- Testing /projects/:id/tasks capabilities. 
 
-MM/DD/YY - 16:25
+10/03/24 - 16:25
 
 E |1.26 POST /projects/1/tasks, with input body (without input body: title field mandatory message):
  { "title": "sed do eiusmod tempo"}, 
@@ -131,18 +127,16 @@ E |1.27 GET /projects/1/tasks, outputs project tasks with ID number 8, as expect
 
 E |1.28 HEAD /projects/1/tasks, 200 OK returns empty body 
 
-
-
 5- Testing /projects/:id/tasks/:id capabilities. 
 
-MM/DD/YY - 16:28
+10/03/24 - 16:28
 
 E |1.29 DELETE /projects/1/tasks/8, deletes the task 8 from projects, but doesn't return succesful deletion message
 E |1.30 DELETE /projects/5/tasks/8, returns no instance error message
 
 6- Testing undocumented capabilities
 
-MM/DD/YY - 16:32
+10/03/24 - 16:32
 begin testing undocumented capabilties 
 U | 1.31 DELETE /projects, error 405 method not allowed (Screenshots/1.31.png)
 U | 1.32 PUT /projects, error 405 method not allowed 
@@ -167,7 +161,6 @@ CONCERNS ---------------------------------------
 TEST IDEAS -------------------------------------
 -> Tested outputs in JSON format, should verify if API is capable to output correct results in XML format (only observed for ID input for now)
 -> Test different attribute types (like null values, strings instead of Integers) to see if errors are handled properly
-
 
 BUG SUMMARY 1 ------------------------------------
 
