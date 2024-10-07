@@ -167,3 +167,59 @@ CONCERNS ---------------------------------------
 TEST IDEAS -------------------------------------
 -> Tested outputs in JSON format, should verify if API is capable to output correct results in XML format (only observed for ID input for now)
 -> Test different attribute types (like null values, strings instead of Integers) to see if errors are handled properly
+
+
+BUG SUMMARY 1 ------------------------------------
+
+ID Generation for Categories and Non-Existent Resource Handling
+
+Description of Bug: The ID generation for categories continues incrementally across all projects instead of starting from 1 for each project.
+
+Potential Impact of Bug on Operation of System: The global increment of category IDs makes it difficult to keep track of which categories belong to specific projects, especially in a large dataset.
+
+Steps to Reproduce the Bug:
+
+- Create a category for project 2.
+- Observe that the generated ID does not start from 1 but instead continues incrementally from the last available ID.
+
+BUG SUMMARY 2 ------------------------------------
+
+Specifying ID in JSON Results in Different Behavior than Expected
+
+Description of Bug: When specifying an ID in JSON format during a POST request to /projects/:id/categories, the system returns different behaviors depending on whether the ID is provided as an integer or a string. For example, POST /projects/2/categories with {"id": 3} fails, while {"id": "3"} succeeds, but string ID format cannot be used with XML.
+
+Potential Impact of Bug on Operation of System: This inconsistent behavior makes the API unpredictable and complicates user interactions, especially for developers trying to automate project category creation using different formats. It also introduces ambiguity into the ID handling mechanism, potentially causing integration issues when working with external systems expecting consistent behavior.
+
+Steps to Reproduce the Bug:
+
+- Send a POST request to /projects/2/categories with {"id": 3} in the body.
+- Observe the failure message.
+- Send a POST request to /projects/2/categories with {"id": "3"} in the body.
+- Observe that it succeeds, while attempting the same operation in XML fails.
+
+BUG SUMMARY 3 ------------------------------------
+
+Handling of Deletion Responses Lacks Clarity
+
+Description of Bug: When performing DELETE requests on project resources, no response message is provided, only an empty body with status code 202 OK. This lack of response message creates uncertainty about whether the resource was successfully deleted, as users do not receive explicit confirmation.
+
+Potential Impact of Bug on Operation of System: Users and automated systems relying on deletion confirmation may face difficulties in determining whether resources were successfully removed. This could lead to retrying deletions unnecessarily, wasting resources.
+
+Steps to Reproduce the Bug:
+
+- Send a DELETE request to /projects/2.
+- Observe that only an empty response body is returned with a 202 OK status code, without any explicit confirmation of deletion.
+
+BUG SUMMARY 4 ------------------------------------
+
+Incorrect Behavior for Non-Existent Projects
+
+Description of Bug: Sending requests to non-existent projects does not result in proper error handling. For example, GET /projects/anything/categories or GET /projects/3/categories when project 3 does not exist, returns the categories of an existing project instead of a 404 Not Found error.
+
+Potential Impact of Bug on Operation of System: This incorrect handling can lead to major data integrity issues. Users or systems might get misleading information, assuming that non-existent projects have associated categories, resulting in incorrect processing of data and potentially compromising business logic.
+
+Steps to Reproduce the Bug:
+
+Send a GET request to /projects/anything/categories or /projects/3/categories where project 3 does not exist.
+Observe that the response incorrectly provides the categories of an existing project instead of a 404 Not Found error.,
+
