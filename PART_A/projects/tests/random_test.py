@@ -30,6 +30,11 @@ from test_projects_unexpected_capabilities import (
     test_get_projects_incorrect_categories,
     test_get_projects_invalid_id_categories,
     test_post_projects_id_categories_with_different_id_formats,
+    test_delete_project_no_confirmation_message,
+    test_post_projects_id_categories_id_generation_allow_pass,
+    test_get_projects_incorrect_categories_allow_pass,
+    test_get_projects_invalid_id_categories_allow_pass,
+    test_post_projects_id_categories_with_different_id_formats_allow_pass,
 )
 
 API_URL = "http://localhost:4567"
