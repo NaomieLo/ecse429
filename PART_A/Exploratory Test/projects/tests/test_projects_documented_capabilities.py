@@ -199,3 +199,14 @@ if __name__ == "__main__":
 
     if run_tests:
         test_summary()
+# run the tests and shit down after
+    if run_tests:
+        pytest.main([__file__, "-s"])
+        response = requests.get(API_URL)
+        assert response.status_code == 200, "API is already shutdown"
+        try:
+            response = requests.get(API_URL + "/shutdown")
+        except requests.exceptions.ConnectionError:
+            assert True
+    else:
+        print("Tests skipped: API is not running or could not be reached.")

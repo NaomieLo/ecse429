@@ -112,6 +112,8 @@ def test_summary():
 
 # Running all tests
 if __name__ == "__main__":
+
+    # check that system is runnig
     try:
         ensure_system_ready()
         run_tests = True
@@ -119,5 +121,14 @@ if __name__ == "__main__":
         print(f"System not ready: {e}")
         run_tests = False
 
+    # run the tests and shut down after
     if run_tests:
-        test_summary()
+        pytest.main([__file__, "-s"])
+        response = requests.get(API_URL)
+        assert response.status_code == 200, "API is already shutdown"
+        try:
+            response = requests.get(API_URL + "/shutdown")
+        except requests.exceptions.ConnectionError:
+            assert True
+    else:
+        print("Tests skipped: API is not running or could not be reached.")

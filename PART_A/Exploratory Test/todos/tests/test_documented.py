@@ -440,7 +440,7 @@ if __name__ == "__main__":
         print(f"System not ready: {e}")
         run_tests = False
 
-    # run the tests and shit down after
+    # run the tests and shut down after
     if run_tests:
         pytest.main([__file__, "-s"])
         response = requests.get(API_URL)

@@ -34,12 +34,14 @@ from test_projects_unexpected_capabilities import (
 
 API_URL = "http://localhost:4567"
 
-# Setup function to ensure the system is in the correct state
-@pytest.fixture(scope="module")
-def setup_system():
-    response = requests.get(API_URL)
-    assert response.status_code == 200, "API is not active"
-    return response
+
+def ensure_system_ready():
+    # check if api is up and running
+    try:
+        response = requests.get(API_URL)
+        assert response.status_code == 200, "API is not active"
+    except requests.exceptions.ConnectionError:
+        raise AssertionError("API is not active or could not connect")
 
 # Test Summary function
 def test_summary():
@@ -96,6 +98,25 @@ def test_summary():
     print(f"Passed: {passed_tests}")
     print(f"Failed: {failed_tests}")
 
-# Running all the tests
+# Running all tests
 if __name__ == "__main__":
-    pytest.main([__file__, "-s"])
+
+    # check that system is running
+    try:
+        ensure_system_ready()
+        run_tests = True
+    except AssertionError as e:
+        print(f"System not ready: {e}")
+        run_tests = False
+
+    # run the tests and shut down after
+    if run_tests:
+        pytest.main([__file__, "-s"])
+        response = requests.get(API_URL)
+        assert response.status_code == 200, "API is already shutdown"
+        try:
+            response = requests.get(API_URL + "/shutdown")
+        except requests.exceptions.ConnectionError:
+            assert True
+    else:
+        print("Tests skipped: API is not running or could not be reached.")
