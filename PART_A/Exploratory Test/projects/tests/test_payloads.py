@@ -14,20 +14,20 @@ def ensure_system_ready():
 #### PROJECTS PAYLOAD TESTS ####
 
 def test_post_projects_malformed_json():
-    # post with malformed json data
+    # post with invalid json data
     malformed_json = '{"title": "test_title", "description": "test_description"'
     headers = {"Content-Type": "application/json"}
 
     response = requests.post(API_URL + "/projects", data=malformed_json, headers=headers)
 
-    # expecting bad request response due to malformed json
+    # expecting bad request response due to bad data
     assert (
         response.status_code == 400
     ), f"POST /projects with malformed json did not return 400 as expected. got {response.status_code} with response: {response.text}"
 
 
 def test_post_projects_malformed_xml():
-    # post with malformed xml data
+    # post with invalid xml data
     malformed_xml = """<projects>
                          <title>title
                        </projects>"""
@@ -35,7 +35,7 @@ def test_post_projects_malformed_xml():
 
     response = requests.post(API_URL + "/projects", data=malformed_xml, headers=headers)
 
-    # expecting bad request response due to malformed xml
+    # expecting bad request response due to invalid xml
     assert (
         response.status_code == 400
     ), f"POST /projects with malformed xml did not return 400 as expected. got {response.status_code} with response: {response.text}"

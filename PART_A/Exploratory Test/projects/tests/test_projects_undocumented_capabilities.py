@@ -6,6 +6,7 @@ API_URL = "http://localhost:4567"
 # Undocumented Capabilities Tests
 
 ### Testing Unsupported HTTP Methods for /projects
+
 def test_delete_projects():
     response = requests.delete(API_URL + "/projects")
     assert response.status_code == 405, "DELETE /projects should not be allowed"
@@ -23,6 +24,7 @@ def test_options_projects():
 
 
 ### Testing Unsupported HTTP Methods for /projects/:id
+
 def test_patch_projects_id():
     # Create a new project
     data = {"title": "Patch Project"}

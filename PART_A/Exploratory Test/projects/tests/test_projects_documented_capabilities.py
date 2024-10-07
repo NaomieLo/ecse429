@@ -58,6 +58,7 @@ def test_head_projects():
 
 
 #### PROJECTS/:ID ####
+
 def test_get_projects_id():
     project_id = create_project("Test Project for GET by ID")
 
@@ -87,6 +88,7 @@ def test_delete_projects_id():
 
 
 #### PROJECTS/:ID/CATEGORIES ####
+
 def test_post_projects_id_categories():
     project_id = create_project("Test Project for POST Categories")
 
@@ -131,6 +133,7 @@ def test_get_projects_id_tasks():
 
 
 #### PROJECTS/:ID/TASKS/:ID ####
+
 def test_delete_projects_id_tasks_id():
     project_id = create_project("Test Project for DELETE Task")
 
