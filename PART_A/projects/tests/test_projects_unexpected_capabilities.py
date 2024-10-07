@@ -120,6 +120,22 @@ def test_post_projects_id_categories_with_different_id_formats():
         # Cleanup
         delete_project(project_id)
 
+def test_delete_project_no_confirmation_message():
+    try:
+        # Create a new project to test deletion
+        project_id = create_project("Project to Test Deletion Message")
+
+        # Perform DELETE request on the created project
+        response = requests.delete(API_URL + f"/projects/{project_id}")
+
+        # Expected behavior: The DELETE request should provide a clear confirmation message
+        assert response.status_code in [200, 204], f"DELETE /projects/{project_id} failed"
+        assert response.text.strip() != "", "No confirmation message provided after deletion"
+
+    except AssertionError as e:
+        print(f"test_delete_project_no_confirmation_message FAILED: {e}")
+        raise e
+
 
 # ALLOW PASS TESTS
 
@@ -232,6 +248,26 @@ def test_post_projects_id_categories_with_different_id_formats_allow_pass():
     finally:
         # Cleanup
         delete_project(project_id)
+
+def test_delete_project_no_confirmation_message_allow_pass():
+    try:
+        # Create a new project to test deletion
+        project_id = create_project("Project to Test Deletion Message Allow Pass")
+
+        # Perform DELETE request on the created project
+        response = requests.delete(API_URL + f"/projects/{project_id}")
+
+        # Allowing the test to pass regardless of whether a confirmation message is provided
+        if response.status_code in [200, 204]:
+            if response.text.strip() == "":
+                print("No confirmation message provided after deletion, but allowing test to pass.")
+            else:
+                print("Confirmation message provided after deletion.")
+        else:
+            assert False, f"DELETE /projects/{project_id} failed with status code {response.status_code}"
+
+    except AssertionError as e:
+        print(f"test_delete_project_no_confirmation_message_allow_pass FAILED: {e}")
 
 
 # Running all the tests
